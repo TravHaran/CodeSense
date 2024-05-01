@@ -1,0 +1,17 @@
+install RAKE
+`pip3 install --user rake-nltk`
+
+install supporting nltk packages
+`python3 -c "import nltk; nltk.download('punkt'); nltk.download('stopwords')"`
+
+if you get a ssl certificate error run following command (change python version to which ever one you're running). Then rerun the above command
+
+`bash '/Applications/Python 3.9/Install Certificates.command'`
+
+to use word2vec install gensim library
+`pip3 install gensim`
+
+
+
+
+
