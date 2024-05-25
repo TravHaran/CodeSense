@@ -41,7 +41,7 @@ class TestKeywordExtract:
         print("Testing keywword extraction of user query...\n")
         text = "I want to modify the maxProfit function to have an initial maxP value of 10"
         output = self.extractor.extract(text)
-        print(f"Keywords from query: {output}")
+        print(f"Keywords from query: {output}\n")
         assert type(output) == list
 
     def test_extract_keywords_from_annotation(self):
@@ -56,7 +56,7 @@ class TestKeywordExtract:
             Overall, this function implements a simple algorithm for finding the total profit from multiple price increases in a stock price list, where each increase represents a buy-and-sell opportunity.
             """
         output = self.extractor.extract(text)
-        print(f"Keywords from annotation: {output}")
+        print(f"Keywords from annotation: {output}\n")
         assert type(output) == list
 
 
