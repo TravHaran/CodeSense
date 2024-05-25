@@ -9,13 +9,13 @@ Create a class to model a character in a video game
 '''
 
 class Character:
-        def __init__(self, health, damage, speed):
-            self.health = health
-            self.damage = damage
-            self.speed = speed
-        
-        def double_speed(self):
-                self.speed *= 2
+    def __init__(self, health, damage, speed):
+        self.health = health
+        self.damage = damage
+        self.speed = speed
+    
+    def double_speed(self):
+            self.speed *= 2
 
 
 
