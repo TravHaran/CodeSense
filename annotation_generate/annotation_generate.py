@@ -18,6 +18,7 @@ class Annotation_Generation:
             ## Set the API key
             load_dotenv()
             API_KEY = os.getenv('OPENAI_SECRET_API_KEY')
+            
             client = OpenAI(api_key=API_KEY)
 
             MODEL="gpt-4o"
