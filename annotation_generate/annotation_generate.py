@@ -10,7 +10,7 @@ Create a class to annotate a piece of given code
     - Summary of code in text
 '''
 
-class Annotation_Generation:
+class AnnotationGeneration:
     def __init__(self):
         self.res = ""
 
