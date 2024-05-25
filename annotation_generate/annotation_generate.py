@@ -130,7 +130,11 @@ class TestSnippetSummary:
           assert type(output) == str
 
           '''
-          EXPECTED OUTPUT:The code is written in JavaScript, specifically using the async/await syntax to handle asynchronous operations with Firestore, a cloud database from Firebase. It defines an event-handling function `handleCreateEvent` meant to create and save event data into the Firestore database. When a form submission event triggers the function, it first prevents the default behavior with `e.preventDefault()`. The function checks if `isDateRange` is false and, based on this, either adds or updates single or range-dated event documents in the Firestore under the 'events' collection. It also conditionally updates the 'announcements' collection based on the existence of date ranges. After database operations, it resets multiple state variables (title, description, dateTime, etc.) and fetches user data. The function ensures newly created or modified data incorporates the current date and time and user metadata. The expected result includes adding appropriate entries in the Firestore under both 'events' and 'announcements' collections and resetting the form's state. 
+          EXPECTED OUTPUT:The code is written in JavaScript, specifically using the async/await syntax to handle asynchronous operations with Firestore, a cloud database from Firebase. 
+          It defines an event-handling function `handleCreateEvent` meant to create and save event data into the Firestore database. When a form submission event triggers the function, it first prevents the default behavior with `e.preventDefault()`. 
+          The function checks if `isDateRange` is false and, based on this, either adds or updates single or range-dated event documents in the Firestore under the 'events' collection. 
+          It also conditionally updates the 'announcements' collection based on the existence of date ranges. After database operations, it resets multiple state variables (title, description, dateTime, etc.) and fetches user data. 
+          The function ensures newly created or modified data incorporates the current date and time and user metadata. The expected result includes adding appropriate entries in the Firestore under both 'events' and 'announcements' collections and resetting the form's state. 
           '''
 
 
@@ -160,7 +164,9 @@ class TestSnippetSummary:
           assert type(output) == str
           '''
           EXPECTED OUTPUT:
-          The code is written in Python and defines a method `topK` within a class `Solution`. The purpose of this method is to return the top k most frequent integers from a given list `nums`. It first creates a `count` dictionary to tally the frequency of each number in `nums`, then organizes these frequencies into a list of lists `freq`. The method then iterates through `freq` in reverse order to gather the k most frequent numbers into the result list `res`, which is returned once it reaches the desired length k. 
+          The code is written in Python and defines a method `topK` within a class `Solution`. The purpose of this method is to return the top k most frequent integers from a given list `nums`. 
+          It first creates a `count` dictionary to tally the frequency of each number in `nums`, then organizes these frequencies into a list of lists `freq`. 
+          The method then iterates through `freq` in reverse order to gather the k most frequent numbers into the result list `res`, which is returned once it reaches the desired length k. 
           '''
     
 
