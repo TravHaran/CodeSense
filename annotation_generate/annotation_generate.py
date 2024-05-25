@@ -1,4 +1,6 @@
 from openai import OpenAI
+import os
+from dotenv import load_dotenv
 
 '''
 Create a class to annotate a piece of given code
@@ -13,9 +15,10 @@ class Annotation_Generation:
         self.res = ""
 
     def snippet_summary(self, snippet):
-
             ## Set the API key
-            client = OpenAI(api_key="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")
+            load_dotenv()
+            API_KEY = os.getenv('OPENAI_SECRET_API_KEY')
+            client = OpenAI(api_key=API_KEY)
 
             MODEL="gpt-4o"
 
