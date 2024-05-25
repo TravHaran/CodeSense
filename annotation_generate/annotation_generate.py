@@ -15,7 +15,7 @@ class Annotation_Generation:
         self.res = ""
 
     def snippet_summary(self, snippet):
-            ## Set the API key
+            ## Set the API Key
             load_dotenv()
             API_KEY = os.getenv('OPENAI_SECRET_API_KEY')
 
