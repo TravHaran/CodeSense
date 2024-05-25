@@ -12,7 +12,7 @@ Create a class to extract keywords from text
 '''
 
 
-class KeyWordExtract:
+class KeywordExtract:
     def __init__(self):
         self.keywords = []
         # common english stopwords
@@ -32,9 +32,9 @@ class KeyWordExtract:
         return self.keywords
 
 
-class TestKeyWordExtract:
+class TestKeywordExtract:
     def __init__(self):
-        self.extractor = KeyWordExtract()
+        self.extractor = KeywordExtract()
         print("Testing Keyword Extractor...\n")
 
     def test_extract_keywords_from_query(self):
@@ -61,6 +61,6 @@ class TestKeyWordExtract:
 
 
 if __name__ == "__main__":
-    testKeyWordExtract = TestKeyWordExtract()
-    testKeyWordExtract.test_extract_keywords_from_query()
-    testKeyWordExtract.test_extract_keywords_from_annotation()
+    testKeywordExtract = TestKeywordExtract()
+    testKeywordExtract.test_extract_keywords_from_query()
+    testKeywordExtract.test_extract_keywords_from_annotation()
