@@ -12,7 +12,7 @@ Create a class to extract keywords from text
 '''
 
 
-class KeyWordExtract:
+class KeywordExtract:
     def __init__(self):
         self.keywords = []
         # common english stopwords
@@ -32,16 +32,16 @@ class KeyWordExtract:
         return self.keywords
 
 
-class TestKeyWordExtract:
+class TestKeywordExtract:
     def __init__(self):
-        self.extractor = KeyWordExtract()
+        self.extractor = KeywordExtract()
         print("Testing Keyword Extractor...\n")
 
     def test_extract_keywords_from_query(self):
         print("Testing keywword extraction of user query...\n")
         text = "I want to modify the maxProfit function to have an initial maxP value of 10"
         output = self.extractor.extract(text)
-        print(f"Keywords from query: {output}")
+        print(f"Keywords from query: {output}\n")
         assert type(output) == list
 
     def test_extract_keywords_from_annotation(self):
@@ -56,11 +56,11 @@ class TestKeyWordExtract:
             Overall, this function implements a simple algorithm for finding the total profit from multiple price increases in a stock price list, where each increase represents a buy-and-sell opportunity.
             """
         output = self.extractor.extract(text)
-        print(f"Keywords from annotation: {output}")
+        print(f"Keywords from annotation: {output}\n")
         assert type(output) == list
 
 
 if __name__ == "__main__":
-    testKeyWordExtract = TestKeyWordExtract()
-    testKeyWordExtract.test_extract_keywords_from_query()
-    testKeyWordExtract.test_extract_keywords_from_annotation()
+    testKeywordExtract = TestKeywordExtract()
+    testKeywordExtract.test_extract_keywords_from_query()
+    testKeywordExtract.test_extract_keywords_from_annotation()
