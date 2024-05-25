@@ -18,13 +18,14 @@ class Annotation_Generation:
             ## Set the API Key
             load_dotenv()
             API_KEY = os.getenv('OPENAI_SECRET_API_KEY')
-
             client = OpenAI(api_key=API_KEY)
 
+            #GPT4o REPONSE REQUEST
             MODEL="gpt-4o"
 
             completion = client.chat.completions.create(
             model=MODEL,
+            #Prompt modelling, grounding the model to provide a more concise and clear summary when given a piece of code
             messages=[
                 {"role": "system", "content": '''You are an AI designed to explain code clearly and concisely. When given a piece of code, your task is to provide a quick summary without giving a detailed breakdown. Your summary should include the programming language, the purpose of the code, a brief explanation of its key components functionality and logic, and the expected output. Respond in a single blurb of text.
 
@@ -60,13 +61,16 @@ class TestSnippetSummary:
      def __init__(self):
         self.summarizer = Annotation_Generation()
         print("Testing Snippet Summarizer... \n")
+    
+        #High-depth code is code that has many variables, refers to many functions, changes variables, and is overall complex to understand from a quick view
      def test_snippet_summarizer_from_high_depth_code(self):
           print("Testing code snippet summarizer with a high depth function... \n")
-          code_snippet = '''const handleCreateEvent = async(e) => {
-        e.preventDefault()
-        // console.log(user)
-        // const dateNow = new Date()
-        //         var date = JSON.stringify(dateNow.getFullYear()+'.'+(dateNow.getMonth()+1)+'.'+dateNow.getDate()).replace("\"", "").replace("\"", "");
+          code_snippet = '''
+          const handleCreateEvent = async(e) => {
+            e.preventDefault()
+            // console.log(user)
+            // const dateNow = new Date()
+            // var date = JSON.stringify(dateNow.getFullYear()+'.'+(dateNow.getMonth()+1)+'.'+dateNow.getDate()).replace("\"", "").replace("\"", "");
                 if (isDateRange == false){
                     await addDoc(collection(db, 'schools', completeSchoolName, 'events'), {
                       title: title,
@@ -125,30 +129,41 @@ class TestSnippetSummary:
           print(f"CODE SUMMARY: \n {output} \n\n")
           assert type(output) == str
 
+          '''
+          EXPECTED OUTPUT:The code is written in JavaScript, specifically using the async/await syntax to handle asynchronous operations with Firestore, a cloud database from Firebase. It defines an event-handling function `handleCreateEvent` meant to create and save event data into the Firestore database. When a form submission event triggers the function, it first prevents the default behavior with `e.preventDefault()`. The function checks if `isDateRange` is false and, based on this, either adds or updates single or range-dated event documents in the Firestore under the 'events' collection. It also conditionally updates the 'announcements' collection based on the existence of date ranges. After database operations, it resets multiple state variables (title, description, dateTime, etc.) and fetches user data. The function ensures newly created or modified data incorporates the current date and time and user metadata. The expected result includes adding appropriate entries in the Firestore under both 'events' and 'announcements' collections and resetting the form's state. 
+          '''
 
+
+     #Low-depth code is code that is fairly simple, not many variables, and easy to follow 
      def test_snippet_summarizer_from_low_depth_code(self):
           print("Testing code snippet summarizer with a low depth function... \n")
-          code_snippet = '''class Solution:
-    def topK(self, nums: List[int], k: int) -> List[int]:
-        count = {}
-        freq = [[] for i in range (len(nums) + 1)]
+          code_snippet = '''
+          class Solution:
+            def topK(self, nums: List[int], k: int) -> List[int]:
+                count = {}
+                freq = [[] for i in range (len(nums) + 1)]
        
-        for n in nums:
-            count[n] = 1 + count.get(n, 0)
-        for n, c in count.items():
-            freq[c].append(n)
+            for n in nums:
+                count[n] = 1 + count.get(n, 0)
+            for n, c in count.items():
+                freq[c].append(n)
        
-        res = []
+            res = []
        
-        for i in range(len(freq) - 1, 0, -1):
-            for n in freq[i]:
-                res.append(n)
-                if len(res) == k:
-                    return res'''
+            for i in range(len(freq) - 1, 0, -1):
+                for n in freq[i]:
+                    res.append(n)
+                    if len(res) == k:
+                        return res'''
           output = self.summarizer.snippet_summary(code_snippet)
           print(f"CODE SUMMARY: \n {output} \n\n")
           assert type(output) == str
+          '''
+          EXPECTED OUTPUT:
+          The code is written in Python and defines a method `topK` within a class `Solution`. The purpose of this method is to return the top k most frequent integers from a given list `nums`. It first creates a `count` dictionary to tally the frequency of each number in `nums`, then organizes these frequencies into a list of lists `freq`. The method then iterates through `freq` in reverse order to gather the k most frequent numbers into the result list `res`, which is returned once it reaches the desired length k. 
+          '''
     
+
 if __name__ == "__main__":
     TestSnippetSummary = TestSnippetSummary()
     TestSnippetSummary.test_snippet_summarizer_from_low_depth_code()
