@@ -59,7 +59,7 @@ class AnnotationGeneration:
 ### TESTING 
 class TestSnippetSummary:
      def __init__(self):
-        self.summarizer = Annotation_Generation()
+        self.summarizer = AnnotationGeneration()
         print("Testing Snippet Summarizer... \n")
     
         #High-depth code is code that has many variables, refers to many functions, changes variables, and is overall complex to understand from a quick view
@@ -126,7 +126,7 @@ class TestSnippetSummary:
                 
       }'''
           output = self.summarizer.snippet_summary(code_snippet)
-          print(f"CODE SUMMARY: \n {output} \n\n")
+          print(f"CODE SUMMARY: \n{output} \n\n")
           assert type(output) == str
 
           '''
@@ -158,7 +158,7 @@ class TestSnippetSummary:
                     if len(res) == k:
                         return res'''
           output = self.summarizer.snippet_summary(code_snippet)
-          print(f"CODE SUMMARY: \n {output} \n\n")
+          print(f"CODE SUMMARY: \n{output} \n\n")
           assert type(output) == str
           '''
           EXPECTED OUTPUT:
