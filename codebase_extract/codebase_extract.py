@@ -32,8 +32,8 @@ class CodebaseExtract:
 
         # Iterate over the entries in the directory
         for entry in os.listdir(path):
-            if not entry.startswith('.'):  # ignore hidden folders & files
-                # Create the fill path for current entry
+            if not entry.startswith('.'): # ignore hidden folders & files
+                # Create the file path for current entry
                 entry_path = os.path.join(path, entry)
                 # if the entry is a directory, recursively call the function
                 if os.path.isdir(entry_path):
@@ -44,7 +44,7 @@ class CodebaseExtract:
                     # save file content as string
                     try:
                         content = self.file_to_string(entry_path)
-                    except OSError:
+                    except OSError: # handle unreadable file content
                         content = "n/a"
                     model['children'].append({'name': entry, 'type': 'file', 'keywords': [
                     ], 'annotation': "", 'content': content})
