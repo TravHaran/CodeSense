@@ -1,5 +1,3 @@
-install RAKE
-`pip3 install --user rake-nltk`
 
 install supporting nltk packages
 `python3 -c "import nltk; nltk.download('punkt'); nltk.download('stopwords')"`
