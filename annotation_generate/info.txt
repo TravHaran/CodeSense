@@ -1,0 +1,5 @@
+pip install:
+    python-dotenv
+    openai
+
+make sure you have the .env file containing the openai secret key in this directory
