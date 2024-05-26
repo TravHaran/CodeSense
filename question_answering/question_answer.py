@@ -1,6 +1,10 @@
 from openai import OpenAI
 import os
 from dotenv import load_dotenv
+import json
+import sys
+sys.path.insert(0, "..")
+from annotation_aggregate.annotation_aggregate import AnnotationAggregate
 
 '''
 Create a response to a user query given context from the codebase
@@ -13,9 +17,21 @@ Create a response to a user query given context from the codebase
 
 
 class QueryAnswer:
-    def __init__(self):
+    def __init__(self, json_file):
         self.res = ""
+        self.file = json_file
+        self.model = self.load_model()
+        self.aggregate = AnnotationAggregate(self.file)
     
+    def load_model(self):
+        d = {}
+        with open(self.file) as json_data:
+            d = json.load(json_data)
+        return d
+
+    def prune_json(self):
+        context = self.aggregate.aggregate_annotations()
+        return context
 
     ## Set the API Key
     def get_response_from_gpt(self, query, context):
@@ -31,7 +47,7 @@ class QueryAnswer:
         #Prompt modelling, grounding the model to provide a more concise and clear summary when given a piece of code
         messages=[
             {"role": "system", "content": '''
-            You are a developer assistant designed to provide detailed answers and assistance based on contextual explanations of code in a codebase. Your input consists of explanations of code files and their respective file directories within the codebase. Users will provide queries related to the codebase, seeking clarification, assistance, or suggestions. Your task is to utilize the provided context to generate clear and structured responses to the user queries. Your responses should be informative, accurate, and tailored to the specific query. Additionally, you may suggest potential actions or direct the user to relevant code files within the codebase for further reference. Your responses should solely rely on the provided context, avoiding external knowledge or assumptions. Remember to maintain clarity and coherence in your responses, ensuring that users can easily understand and follow your guidance.
+            You are a developer assistant designed to provide detailed answers and assistance based on contextual explanations of code in a codebase. Your input consists of explanations of code files and their respective file directories within the codebase. Users will provide queries related to the codebase, seeking clarification, assistance, or suggestions. Your task is to utilize the provided context to generate clear and structured responses to the user queries. Your responses should be informative, accurate, and tailored to the specific query. Additionally, you may suggest potential actions or direct the user to relevant code files within the codebase for further reference. Your responses should solely rely on the provided context, avoiding external knowledge or assumptions. Remember to maintain clarity and coherence in your responses, ensuring that users can easily understand and follow your guidance. Make sure to keep your responses as short as possible as well so that the developer can quickly view an answer their question.
 
             Example:
 
@@ -58,8 +74,15 @@ class QueryAnswer:
 ### TESTING 
 class TestQueryAnswering:
      def __init__(self):
-        self.responder = QueryAnswer()
+        self.test_json_file = "/Users/derrickratnaharan/Documents/CodeSense/codesense/question_answering/top_5.json"
+        self.responder = QueryAnswer(self.test_json_file)
         print("Testing Query Response... \n")
+    
+     def testkeywordextract_explanation(self):
+        context = self.responder.prune_json()
+        query="How does the testkeywordextract function work in this codebase?"
+        output = self.responder.get_response_from_gpt(query, context)
+        print(output)
 
      def query_response(self):
         context = '''
@@ -78,7 +101,9 @@ class TestQueryAnswering:
         print(f"RESPONSE: \n{output} \n\n")
 
         assert type(output) == str
+    
 
 if __name__ == "__main__":
     TestQueryAnswering = TestQueryAnswering()
+    TestQueryAnswering.testkeywordextract_explanation()
     TestQueryAnswering.query_response()
