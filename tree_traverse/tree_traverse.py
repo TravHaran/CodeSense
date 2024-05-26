@@ -64,7 +64,7 @@ class TraverseCodebase:
 
     def save_top_n(self, n, input_keywords):
         # save the top n nodes as json
-        result = {"results": []}
+        result = {"input_keywords": input_keywords, "results": []}
         for entry in self.top_nodes_with_score:
             score = entry[0]
             node = entry[1]
