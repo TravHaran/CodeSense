@@ -50,7 +50,7 @@ class Integration:
 class TestIntegration:
     def __init__(self):
         print("INTEGRATION TEST")
-        test_code_base = "rust-calculator"
+        test_code_base = "rust_calculator_project"
         test_ignore_file = "ignore.txt"
         self.integration = Integration(test_code_base, test_ignore_file)
     
