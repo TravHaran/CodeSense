@@ -1,18 +1,20 @@
-import json
+import sys
+
+sys.path.insert(0, "..")
+from utilities.utility import json_to_obj
 
 '''
 Create a class to aggregate the annotations of some target nodes
 - input:
-    - search_result json file containing most relevant nodes with annotations 
+    - search_result object containing most relevant nodes with annotations 
 - output:
     - an aggregate of all the relevant annotations in string format
     - optionally save output as txt file
 '''
 
 class AnnotationAggregate:
-    def __init__(self, search_result_file_path):
-        self.file_path = search_result_file_path
-        self.result_model = self.load_model()
+    def __init__(self, traverse_obj):
+        self.result_model = traverse_obj
         self.annotations = []
     
     def aggregate_annotations(self):
@@ -30,34 +32,22 @@ class AnnotationAggregate:
             annotation = entry[1]
             output += str(f"FILENAME: {name}\nDESCRIPTION: \"{annotation}\"\n\n")
         return output
-          
-    def load_model(self):
-        d = {}
-        with open(self.file_path) as json_data:
-            d = json.load(json_data)
-        return d
+
 
 class TestAnnotationAggregate:
     def test_aggreagate_top_1_results(self):
-        test_json_file = "/Users/trav/Documents/projects/codesense/annotation_aggregate/top_1.json"
-        aggregator = AnnotationAggregate(test_json_file)
+        test_traverse_obj = json_to_obj("top_1.json")
+        aggregator = AnnotationAggregate(test_traverse_obj)
         print("\nTesting Aggregation of top 1 results:")
         result = aggregator.aggregate_annotations()
         print(result)
     def test_aggreagate_top_3_results(self):
-        test_json_file = "/Users/trav/Documents/projects/codesense/annotation_aggregate/top_3.json"
-        aggregator = AnnotationAggregate(test_json_file)
+        test_traverse_obj = json_to_obj("top_3.json")
+        aggregator = AnnotationAggregate(test_traverse_obj)
         print("\nTesting Aggregation of top 3 results:")
-        print(aggregator.aggregate_annotations())
-        
-    def test_aggreagate_top_10_results(self):
-        test_json_file = "/Users/trav/Documents/projects/codesense/annotation_aggregate/top_10.json"
-        aggregator = AnnotationAggregate(test_json_file)
-        print("\nTesting Aggregation of top 10 results:")
         print(aggregator.aggregate_annotations())
 
 if __name__ == "__main__":
     testAnnotationAggregate = TestAnnotationAggregate()
     testAnnotationAggregate.test_aggreagate_top_1_results()
     testAnnotationAggregate.test_aggreagate_top_3_results()
-    testAnnotationAggregate.test_aggreagate_top_10_results()
