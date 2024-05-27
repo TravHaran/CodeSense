@@ -1,15 +1,14 @@
 import os
-import json
 import sys
 sys.path.insert(0, "..")
 
-from utilities.utility import json_to_obj, obj_to_json, file_to_string
+from utilities.utility import obj_to_json, file_to_string
 
 '''
 Create a class to extract a model of a codebase as a tree
 - input: local directory path as a string
 - output: 
-    - json file containing tree structure of directory
+    - object containing tree structure of directory
     - at leaf nodes store content of file as a string (if it's content is readable)
 '''
 
