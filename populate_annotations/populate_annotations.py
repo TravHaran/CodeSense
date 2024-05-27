@@ -1,39 +1,43 @@
 import json
+import os
 import sys
 
 sys.path.insert(0, "..")
 from annotation_generate.annotation_generate import AnnotationGeneration
+from utilities.utility import file_to_string, obj_to_json, json_to_obj
 
 '''
 Create a class to populate the codebase json with annotations
 - input: 
-    - codebase model json file
+    - codebase model object
 - output:
-    - modified json file with updated annotation fields
+    - codebase model object with updated annotation fields
 '''
 
 class PopulateAnnotations:
-    def __init__(self, model_file_path):
-        self.file_path = model_file_path
+    def __init__(self, model_obj, ignore_paths_file):
+        #ignore_paths is a txt file containing file_paths to ignore
         self.annotator = AnnotationGeneration()
-        self.model = self.load_model()
+        self.model = model_obj
+        self.ignore_list = self.build_ignore_list(ignore_paths_file)
     
-    def load_model(self):
-        d = {}
-        with open(self.file_path) as json_data:
-            d = json.load(json_data)
-        return d
+    def build_ignore_list(self, txt_file):
+        # read txt file as string
+        ignore_list = file_to_string(txt_file).splitlines()
+        return ignore_list
+        
     
     def annotate(self, content_str):
         formated_str = content_str.replace("\n", "") # remove newline characters
-        output = self.annotator.snippet_summary(formated_str)
+        output = self.annotator.snippet_summary(formated_str) # comment this out to stub API call for testing purposes
         # output = "test"
         return output
     
-    def populate(self):
-        self._populate(self.model)
+    def populate_model(self):
+        self._populate(self.model, self.model["name"])
+        return self.model
         
-    def _populate(self, model):
+    def _populate(self, model, cur_path):
         if model["type"] == "file":
             if model["content"] not in ["n/a", ""]:
                 annotation = self.annotate(model["content"])
@@ -41,24 +45,24 @@ class PopulateAnnotations:
                 return model  
         else:
             for child in model["children"]:
-                self._populate(child)
-    
-    def save_json(self):
-        save_file = open(self.file_path, 'w')
-        json.dump(self.model, save_file, indent=4)
-        save_file.close()
-        print(f"Codebase model updated with annotations and saved: {self.file_path}")
-        return self.model
+                #build path string of traversal
+                new_path = os.path.join(cur_path, child["name"])
+                if new_path not in self.ignore_list:
+                    self._populate(child, new_path)
 
 class TestPopulateAnnotations:
     def __init__(self):
-        self.test_json_file = "/Users/trav/Documents/projects/codesense/populate_annotations/test_codebase.json"
-        self.populator = PopulateAnnotations(self.test_json_file)
+        self.test_model = json_to_obj("test_codebase_original.json") 
+        self.test_ignore_file = "ignore.txt"
+        self.populator = PopulateAnnotations(self.test_model, self.test_ignore_file)
         
     def test_populate_annotations(self):
         print("Testing annotation population")
-        self.populator.populate()
-        self.populator.save_json()
+        updated_model = self.populator.populate_model()
+        obj_to_json("./", "test", updated_model)
+        assert type(updated_model) == dict
+    
+        
 
 if __name__ == "__main__":
     testPopulateAnnotations = TestPopulateAnnotations()
