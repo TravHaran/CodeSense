@@ -1,40 +1,30 @@
 from openai import OpenAI
 import os
 from dotenv import load_dotenv
-import json
 import sys
+
 sys.path.insert(0, "..")
 from annotation_aggregate.annotation_aggregate import AnnotationAggregate
+from utilities.utility import json_to_obj
 
 '''
-Create a response to a user query given context from the codebase
+Create a class that responds to a user query given context from the codebase
 - input:
-    - User query
-    - Code Context (Function, Class, etc.)
+    - traversal result object
 - output:
-    - Response to user query
+    - Response to user query as string
 '''
 
 
 class QueryAnswer:
-    def __init__(self, json_file):
+    def __init__(self, traverse_obj):
         self.res = ""
-        self.file = json_file
-        self.model = self.load_model()
-        self.aggregate = AnnotationAggregate(self.file)
-    
-    def load_model(self):
-        d = {}
-        with open(self.file) as json_data:
-            d = json.load(json_data)
-        return d
-
-    def prune_json(self):
-        context = self.aggregate.aggregate_annotations()
-        return context
+        self.traversal = traverse_obj
+        aggregator = AnnotationAggregate(self.traversal)
+        self.context = aggregator.aggregate_annotations()
 
     ## Set the API Key
-    def get_response_from_gpt(self, query, context):
+    def get_response(self, query):
         load_dotenv()
         API_KEY = os.getenv('OPENAI_SECRET_API_KEY')
         client = OpenAI(api_key=API_KEY)
@@ -65,7 +55,7 @@ class QueryAnswer:
             {"role": "user", "content": f'''With that said. The query and context is given below:
             QUERY: {query}
             
-            CODEBASE CONTEXT: {context}
+            CODEBASE CONTEXT: {self.context}
             '''}
         ]
         )
@@ -74,36 +64,17 @@ class QueryAnswer:
 ### TESTING 
 class TestQueryAnswering:
      def __init__(self):
-        self.test_json_file = "/Users/derrickratnaharan/Documents/CodeSense/codesense/question_answering/top_5.json"
-        self.responder = QueryAnswer(self.test_json_file)
+        self.test_model = json_to_obj("top_5.json")
+        self.responder = QueryAnswer(self.test_model)
         print("Testing Query Response... \n")
     
-     def testkeywordextract_explanation(self):
-        context = self.responder.prune_json()
-        query="How does the testkeywordextract function work in this codebase?"
-        output = self.responder.get_response_from_gpt(query, context)
+     def test_keyword_extract_explanation(self):
+        query="How does keyword extraction work in this project?"
+        output = self.responder.get_response(query)
         print(output)
-
-     def query_response(self):
-        context = '''
-        File 1: authentication.js
-        The code is written in TypeScript, utilizing the Firebase Authentication module to handle user authentication within the application. This file defines various functions for user authentication, including `registerUser`, `loginUser`, and `logoutUser`. The `registerUser` function accepts user credentials (email and password) as parameters and utilizes Firebase's authentication API to create a new user account. Upon successful registration, the function returns a user object containing user information such as UID and email. The `loginUser` function allows existing users to log in by providing their credentials, which are authenticated against Firebase's user database. If the authentication is successful, the function returns the user object corresponding to the authenticated user. Additionally, the file includes error handling mechanisms to manage authentication errors, such as incorrect credentials or network issues. File Directory: /src/utils/authentication.ts
-
-        File 2: dashboard.js
-        This JavaScript file serves as the main dashboard component of the application. It is responsible for fetching and displaying user-specific data retrieved from Firebase Firestore and Realtime Database. The `fetchUserData` function asynchronously retrieves user data from Firestore, including user profile information, preferences, and recent activity. The retrieved data is then utilized to dynamically populate various components of the dashboard interface. Additionally, the file contains event listeners to handle user interactions, such as clicking on navigation links or updating preferences. File Directory: /src/components/dashboard/Dashboard.js
-        File 3: utils.js
-        The `utils.js` file contains utility functions used across multiple components of the application. These functions include `formatDate`, `capitalizeString`, and `generateUniqueId`. The `formatDate` function takes a date object as input and formats it into a human-readable date string. The `capitalizeString` function capitalizes the first letter of a given string. Lastly, the `generateUniqueId` function generates a unique identifier using a combination of timestamp and random characters. These utility functions enhance code readability, maintainability, and reusability throughout the application. File Directory: /src/utils/utils.js
-        '''
-        query="How does the authentication system handle password reset requests?"
-        output = self.responder.get_response_from_gpt(query, context)
-        print(f"CONTEXT: \n{context} \n\n")
-        print(f"QUERY: \n{query} \n\n")
-        print(f"RESPONSE: \n{output} \n\n")
-
         assert type(output) == str
     
 
 if __name__ == "__main__":
     TestQueryAnswering = TestQueryAnswering()
-    TestQueryAnswering.testkeywordextract_explanation()
-    TestQueryAnswering.query_response()
+    TestQueryAnswering.test_keyword_extract_explanation()
