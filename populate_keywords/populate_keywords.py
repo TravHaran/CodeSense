@@ -1,27 +1,20 @@
-import json
 import sys
 
 sys.path.insert(0, "..")
 from keyword_extract.keyword_extract import KeywordExtract
+from utilities.utility import obj_to_json, json_to_obj
 
 '''
 Create a class to populate the codebase json with keywords
 - input: 
-    - codebase model json file
+    - codebase model object
 - output:
-    - modified json file with updated annotation fields
+    - codebase model object with updated keywords fields
 '''
 
 class PopulateKeywords:
-    def __init__(self, model_file_path):
-        self.file_path = model_file_path
-        self.model = self.load_model()
-    
-    def load_model(self):
-        d = {}
-        with open(self.file_path) as json_data:
-            d = json.load(json_data)
-        return d
+    def __init__(self, model_obj):
+        self.model = model_obj
     
     def extractKeywords(self, content_str):
         formated_str = content_str.replace("\n", "") # remove newline characters
@@ -30,8 +23,9 @@ class PopulateKeywords:
         # output = "test"
         return output
     
-    def populate(self):
+    def populate_model(self):
         self._populate(self.model)
+        return self.model
         
     def _populate(self, model):
         if model["type"] == "file":
@@ -43,22 +37,17 @@ class PopulateKeywords:
             for child in model["children"]:
                 self._populate(child)
     
-    def save_json(self):
-        save_file = open(self.file_path, 'w')
-        json.dump(self.model, save_file, indent=4)
-        save_file.close()
-        print(f"Codebase model updated with keywords and saved: {self.file_path}")
-        return self.model
     
 class TestPopulateKeyWords:
     def __init__(self):
-        self.test_json_file = "/Users/derrickratnaharan/Documents/CodeSense/codesense/populate_keywords/test_codebase.json"
-        self.populator = PopulateKeywords(self.test_json_file)
+        self.test_model = json_to_obj("test_codebase_original.json")
+        self.populator = PopulateKeywords(self.test_model)
 
     def test_populate_keywords(self):
         print("Testing annotation population")
-        self.populator.populate()
-        self.populator.save_json()
+        updated_model = self.populator.populate_model()
+        obj_to_json("./", "test", updated_model)
+        assert type(updated_model) == dict
 
 if __name__ == "__main__":
     testPopulateKeyWords = TestPopulateKeyWords()
