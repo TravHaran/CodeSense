@@ -1,2 +1,0 @@
-to run codellama model install transformers
-`pip install transformers accelerate`

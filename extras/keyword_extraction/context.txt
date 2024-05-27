@@ -1,7 +1,0 @@
-The maxProfit function is part of a C++ class Solution. It calculates the maximum profit that can be made from a list of stock prices (prices). The function follows these steps:
-Nike is a sports apparel company. It's brand is recognized accross the country
-Initialize Profit: It initializes maxP, the maximum profit, to 0.
-Iterate Through Prices: It loops through the list of prices from the second element (index 1) to the end.
-Calculate Profit: If the current price is higher than the previous price, it calculates the profit by subtracting the previous price from the current price and adds it to maxP.
-Return Profit: The function returns the accumulated maxP as the maximum profit.
-Overall, this function implements a simple algorithm for finding the total profit from multiple price increases in a stock price list, where each increase represents a buy-and-sell opportunity.
