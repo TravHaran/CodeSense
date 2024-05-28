@@ -1,10 +1,10 @@
+from app import App
+from utilities.utility import obj_to_json
 import threading
 from queue import Queue
 import sys
 
 sys.path.insert(0, "..")
-from utilities.utility import obj_to_json
-from app import App
 '''
 define a class that can accept a list of codebases and model them
 - use multithreading
@@ -15,61 +15,58 @@ define a class that can accept a list of codebases and model them
 
 class BatchModel:
     def __init__(self, codebases: list[(str, dict)]):
-        # TODO implement a thread pool such that if the number of input codebases is below the maxthreads limit 
+        # TODO implement a thread pool such that if the number of input codebases is below the maxthreads limit
         # it runs all operations within the pool, but if not if allocates enough pools to complete the batch request
-        self.max_threads = 5 
+        self.max_threads = 5
         self.q = Queue(maxsize=0)
         self.input_codebases = codebases
         self.result = []
-        
+
     def model_codebase(self, codebase, ignores):
         model = App().model_code_base(codebase, ignores)
         self.q.put(model)
-    
+
     def run(self) -> dict:
         if len(self.input_codebases) > self.max_threads:
             self._run_multi_pool()
         else:
             self._run_single_pool()
         return self._build_result()
-        
-    
+
     def _run_single_pool(self):
         threads = []
         for entry in self.input_codebases:
             codebase = entry[0]
             ignores = entry[1]
-            threads.append(threading.Thread(target=self.model_codebase, args=(codebase, ignores)))
-            
+            threads.append(threading.Thread(
+                target=self.model_codebase, args=(codebase, ignores)))
+
         for x in threads:
             x.start()
         for x in threads:
             x.join()
-    
+
     def _run_multi_pool(self):
         threads = []
         for entry in self.input_codebases:
             codebase = entry[0]
             ignores = entry[1]
-            threads.append(threading.Thread(target=self.model_codebase, args=(codebase, ignores)))
-        
+            threads.append(threading.Thread(
+                target=self.model_codebase, args=(codebase, ignores)))
+
         for i in range(0, len(threads), self.max_threads):
             pool = threads[i: i+self.max_threads]
             for j in pool:
                 j.start()
             for j in pool:
                 j.join()
-    
+
     def _build_result(self):
         while not self.q.empty():
             model = self.q.get()
             self.result.append(model)
         output = {"results": self.result}
         return output
-        
-        
-            
-        
 
 
 class TestBatchModel:
