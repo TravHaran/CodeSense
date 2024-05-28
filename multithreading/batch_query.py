@@ -46,7 +46,7 @@ class BatchQuery:
             self.threads.append(threading.Thread(
                 target=self.query_codebase, args=(model, )))
             
-        if len(self.models) > self.max_threads:
+        if len(self.threads) > self.max_threads:
             self._run_multi_pool()
         else:
             self._run_single_pool()

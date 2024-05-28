@@ -55,7 +55,7 @@ class PopulateAnnotations:
 
 class TestPopulateAnnotations:
     def __init__(self):
-        self.test_model = json_to_obj("test_codebase_original.json") 
+        self.test_model = json_to_obj("test_github_codebase.json") 
         self.test_ignore_file = "ignore.txt"
         self.populator = PopulateAnnotations(self.test_model, self.test_ignore_file)
         

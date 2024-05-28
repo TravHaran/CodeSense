@@ -78,7 +78,7 @@ class CodeBaseExtractGithub:
 
 class TestCodebaseExtractGithub:
     def __init__(self):
-        self.test_github_repo = "https://github.com/TravHaran/codesense"      
+        self.test_github_repo = "https://github.com/TravHaran/rust-calculator"      
         self.extractor = CodeBaseExtractGithub(self.test_github_repo)
         print("Testing Github Codebase Extractor...\n")
     
