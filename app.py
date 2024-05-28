@@ -21,8 +21,8 @@ class App:
         # Populate Keywords
         populate_keywords = PopulateKeywords(code_base_model)
         code_base_model = populate_keywords.populate_model()
-        # Save final model
-        obj_to_json("./out", "codebase", code_base_model)
+        # # Save final model
+        # obj_to_json("./out", "codebase", code_base_model)
         return code_base_model
     
     def query_code_base(self, code_base_model: dict, question: str, search_result_limit: int) -> str:
