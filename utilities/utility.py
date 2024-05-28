@@ -31,6 +31,20 @@ def file_to_string(file_path):  # save file content as string
     file.close()
     return file_content
 
+def compute_score(target_keywords, input_keywords):
+        score = 0
+        if not input_keywords or not target_keywords:  # handle empty list
+            return score
+        # input keywords should already be lowered, so only lower target_keywords
+        target_keywords = convert_words_to_lowercase(target_keywords)
+        for word in input_keywords:
+            if word in target_keywords:
+                score += 1
+        return score/len(input_keywords)
+
+def convert_words_to_lowercase(words):
+        return [word.lower() for word in words]
+
 
 class TestUtility:
     def __init__(self):

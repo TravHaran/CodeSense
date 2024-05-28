@@ -1,7 +1,7 @@
 import sys
 
 sys.path.insert(0, "..")
-from utilities.utility import obj_to_json, json_to_obj
+from utilities.utility import obj_to_json, json_to_obj, compute_score, convert_words_to_lowercase
 
 '''
 Create a class to find the most relevant node in the codebase model given some keywords
@@ -19,19 +19,8 @@ class TraverseCodebase:
         self.top_nodes_with_score = []
         self.result_file_name = "result"
 
-    def compute_score(self, target_keywords, input_keywords):
-        score = 0
-        if not input_keywords or not target_keywords:  # handle empty list
-            return score
-        # input keywords should already be lowered, so only lower target_keywords
-        target_keywords = self.convert_keywords_to_lowercase(target_keywords)
-        for word in input_keywords:
-            if word in target_keywords:
-                score += 1
-        return score/len(input_keywords)
-
     def get_matched_keywords(self, target_keywords, input_keywords):
-        target_keywords_lowered = self.convert_keywords_to_lowercase(
+        target_keywords_lowered = convert_words_to_lowercase(
             target_keywords)
         input_set = set(input_keywords)
         target_set = set(target_keywords_lowered)
@@ -43,7 +32,7 @@ class TraverseCodebase:
         # we need to reset the top_nodes list to empty so that multiple calls of this method don't append to it
         self.top_nodes_with_score = []
         # lower input keywords to compute score properly
-        input_keywords_lowered = self.convert_keywords_to_lowercase(
+        input_keywords_lowered = convert_words_to_lowercase(
             input_keywords)
         # recursively populate top_nodes list
         self._get_top_nodes(self.model, input_keywords_lowered)
@@ -55,7 +44,7 @@ class TraverseCodebase:
     def _get_top_nodes(self, model, input_keywords):
         if model["type"] == "file":
             # get matching keyword score
-            score = self.compute_score(model["keywords"], input_keywords)
+            score = compute_score(model["keywords"], input_keywords)
             self.top_nodes_with_score.append((score, model))
             return model
         else:
@@ -75,8 +64,7 @@ class TraverseCodebase:
         result["results"] = result["results"][:n]
         return result
 
-    def convert_keywords_to_lowercase(self, keywords):
-        return [word.lower() for word in keywords]
+    
 
 
 class TestTraverseCodebase:
