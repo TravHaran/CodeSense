@@ -4,7 +4,7 @@ import sys
 
 sys.path.insert(0, "..")
 from app import App
-from utilities.utility import obj_to_json, json_to_obj
+from utilities.utility import obj_to_json
 '''
 define a class that can accept a list of codebases and model them
 - use multithreading
