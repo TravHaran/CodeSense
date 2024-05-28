@@ -11,11 +11,11 @@
         {
             "score": 0.8333333333333334,
             "matched_keywords": [
-                "python",
+                "word2vec",
                 "function",
                 "extract_keywords",
-                "word2vec",
-                "nltk"
+                "nltk",
+                "python"
             ],
             "node": {
                 "name": "main.py",
@@ -95,9 +95,9 @@
         {
             "score": 0.5,
             "matched_keywords": [
-                "nltk",
                 "testkeywordextract",
-                "python"
+                "python",
+                "nltk"
             ],
             "node": {
                 "name": "keyword_extract.py",

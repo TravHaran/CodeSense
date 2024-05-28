@@ -21,11 +21,9 @@ class App:
         # Populate Keywords
         populate_keywords = PopulateKeywords(code_base_model)
         code_base_model = populate_keywords.populate_model()
-        # # Save final model
-        # obj_to_json("./out", "codebase", code_base_model)
         return code_base_model
     
-    def query_code_base(self, code_base_model: dict, question: str, search_result_limit: int) -> str:
+    def query_code_base(self, code_base_model: dict, question: str, search_result_limit: int) -> dict:
         # Extract Keywords
         extract_keywords = KeywordExtract()
         query_keywords = extract_keywords.extract(question)
@@ -35,7 +33,9 @@ class App:
         # Question Answer
         responder = QueryAnswer(search_result)
         response = responder.get_response(question)
-        return response
+        search_result['question'] = question
+        search_result['answer'] = response
+        return search_result
 
 class TestApp:
     def __init__(self):
@@ -46,24 +46,29 @@ class TestApp:
     def test_run(self):
         print(f"modelling codebase from repo: {self.test_github_repo}")
         model = self.app.model_code_base(self.test_github_repo, self.test_ignore)
+        # Save final model
+        obj_to_json("./out", "codebase", model)
         #Q1
         question = "Does this project have a multiplication capability?"
         print(f"Q: {question}")
         print("querying codebase...")
         response = self.app.query_code_base(model, question, 3)
-        print(f"RESPONSE: \n{response}\n")
+        ans = response["answer"]
+        print(f"RESPONSE: \n{ans}\n")
         #Q2
         question = "does it have a square operation functionality?"
         print(f"Q: {question}")
         print("querying codebase...")
         response = self.app.query_code_base(model, question, 3)
-        print(f"RESPONSE: \n{response}\n")
+        ans = response["answer"]
+        print(f"RESPONSE: \n{ans}\n")
         #Q3
         question = "how would we modify the code to add a square function?"
         print(f"Q: {question}")
         print("querying codebase...")
         response = self.app.query_code_base(model, question, 3)
-        print(f"RESPONSE: \n{response}\n")
+        ans = response["answer"]
+        print(f"RESPONSE: \n{ans}\n")
         
 if __name__ == "__main__":
     testApp = TestApp()
