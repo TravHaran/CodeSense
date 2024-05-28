@@ -108,15 +108,17 @@ class TestIntegration:
     
     def test_run_loop_prompt(self):
         print("modelling codebase...")
-        self.integration.model_codebase()
+        integration = Integration(self.test_github_repo, self.test_ignore_file)
+        integration.model_codebase()
         while True:
             question = input("QUESTION: ")
             print("querying codebase...")
-            response = self.integration.query(question)
+            response = integration.query(question)
             print(f"RESPONSE: \n{response}\n")
         
         
 if __name__ == "__main__":
     testIntegration = TestIntegration()
-    testIntegration.test_run_github_repo()
-    testIntegration.test_run_local_codebase()
+    # testIntegration.test_run_loop_prompt()
+    # testIntegration.test_run_github_repo()
+    # testIntegration.test_run_local_codebase()
