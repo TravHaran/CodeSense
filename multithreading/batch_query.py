@@ -1,3 +1,7 @@
+import sys
+
+sys.path.insert(0, "..")
+
 from question_answering.question_answer import QueryAnswer
 from keyword_extract.keyword_extract import KeywordExtract
 from tree_traverse.tree_traverse import TraverseCodebase
@@ -5,9 +9,7 @@ from utilities.utility import obj_to_json, json_to_obj, get_matched_keywords, co
 from app import App
 import threading
 from queue import Queue
-import sys
 
-sys.path.insert(0, "..")
 
 '''
 define a class that can query multiple codebases and return an answer
@@ -22,6 +24,7 @@ define a class that can query multiple codebases and return an answer
 
 class BatchQuery:
     def __init__(self, batch_models: dict, question: str, search_result_limit: int):
+        self.threads = []
         self.models = batch_models["results"]
         self.max_threads = 5
         self.q = Queue(maxsize=0)
@@ -39,6 +42,10 @@ class BatchQuery:
             self.q.put((score, node))
 
     def run(self) -> dict:
+        for model in self.models:
+            self.threads.append(threading.Thread(
+                target=self.query_codebase, args=(model, )))
+            
         if len(self.models) > self.max_threads:
             self._run_multi_pool()
         else:
@@ -46,24 +53,14 @@ class BatchQuery:
         return self._build_result()
 
     def _run_single_pool(self):
-        threads = []
-        for model in self.models:
-            threads.append(threading.Thread(
-                target=self.query_codebase, args=(model, )))
-
-        for x in threads:
+        for x in self.threads:
             x.start()
-        for x in threads:
+        for x in self.threads:
             x.join()
 
     def _run_multi_pool(self):
-        threads = []
-        for model in self.models:
-            threads.append(threading.Thread(
-                target=self.query_codebase, args=(model, )))
-
-        for i in range(0, len(threads), self.max_threads):
-            pool = threads[i: i+self.max_threads]
+        for i in range(0, len(self.threads), self.max_threads):
+            pool = self.threads[i: i+self.max_threads]
             for j in pool:
                 j.start()
             for j in pool:
