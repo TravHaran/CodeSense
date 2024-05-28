@@ -1,7 +1,7 @@
 import sys
 
 sys.path.insert(0, "..")
-from utilities.utility import obj_to_json, json_to_obj, compute_score, convert_words_to_lowercase
+from utilities.utility import obj_to_json, json_to_obj, compute_score, convert_words_to_lowercase, get_matched_keywords
 
 '''
 Create a class to find the most relevant node in the codebase model given some keywords
@@ -18,15 +18,6 @@ class TraverseCodebase:
         self.model = model_obj
         self.top_nodes_with_score = []
         self.result_file_name = "result"
-
-    def get_matched_keywords(self, target_keywords, input_keywords):
-        target_keywords_lowered = convert_words_to_lowercase(
-            target_keywords)
-        input_set = set(input_keywords)
-        target_set = set(target_keywords_lowered)
-        # find intersection
-        common_elems = input_set.intersection(target_set)
-        return list(common_elems)
 
     def get_top_nodes(self, input_keywords, n):
         # we need to reset the top_nodes list to empty so that multiple calls of this method don't append to it
@@ -57,7 +48,7 @@ class TraverseCodebase:
             score = entry[0]
             node = entry[1]
             # add matched keywords attribute
-            matched_keywords = self.get_matched_keywords(
+            matched_keywords = get_matched_keywords(
                 node["keywords"], input_keywords)
             entry = {'score': score, 'matched_keywords': matched_keywords, 'node': node}
             result["results"].append(entry)

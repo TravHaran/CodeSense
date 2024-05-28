@@ -45,6 +45,16 @@ def compute_score(target_keywords, input_keywords):
 def convert_words_to_lowercase(words):
         return [word.lower() for word in words]
 
+def get_matched_keywords(target_keywords, input_keywords):
+        # the input keywords should already be lowered
+        target_keywords_lowered = convert_words_to_lowercase(
+            target_keywords)
+        input_set = set(input_keywords)
+        target_set = set(target_keywords_lowered)
+        # find intersection
+        common_elems = input_set.intersection(target_set)
+        return list(common_elems)
+
 
 class TestUtility:
     def __init__(self):
