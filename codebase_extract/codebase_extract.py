@@ -25,7 +25,8 @@ class CodebaseExtract:
         return self.model
 
     def _build_model(self, path):  # extracts a directory as a json object
-        model = {'name': os.path.basename(path),
+        absolute_cur_path = os.path.abspath(path)
+        model = {'name': os.path.basename(path), 'path': absolute_cur_path,
                  'type': 'folder', 'keywords': [], 'children': []}
         # Check if the path is a directory
         if not os.path.isdir(path):
@@ -46,7 +47,8 @@ class CodebaseExtract:
                         content = file_to_string(entry_path)
                     except Exception: # handle unreadable file content
                         content = "n/a"
-                    model['children'].append({'name': entry, 'type': 'file', 'keywords': [
+                    absolute_entry_path = os.path.abspath(entry_path)
+                    model['children'].append({'name': entry, 'path': absolute_entry_path, 'type': 'file', 'keywords': [
                     ], 'annotation': "", 'content': content})
         return model
 

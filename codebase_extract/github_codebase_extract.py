@@ -40,10 +40,13 @@ class CodeBaseExtractGithub:
     def get_model(self):
         path_content = self.get_content("")
         self.model = self._build_model("", path_content)
+        #add repo name to top level of model
+        self.model["name"] = self.repo_name
         return self.model
     
     def _build_model(self, path, content):
-        model = {'name': os.path.basename(path),
+        full_cur_path = os.path.join(self.repo_name, path)
+        model = {'name': os.path.basename(path), 'path': full_cur_path,
                  'type': 'folder', 'keywords': [], 'children': []}
         # Check if the path is a directory
         if not self.content_is_dir(content):
@@ -67,7 +70,8 @@ class CodeBaseExtractGithub:
                         # content = entry_content["content"]
                     except Exception: # handle decode errors
                         content = "n/a"
-                    model['children'].append({'name': name, 'type': 'file', 'keywords': [
+                    full_entry_path = os.path.join(self.repo_name, entry_path)
+                    model['children'].append({'name': name, 'path': full_entry_path, 'type': 'file', 'keywords': [
                     ], 'annotation': "", 'content': content})
         return model
                         
