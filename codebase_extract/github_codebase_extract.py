@@ -43,7 +43,6 @@ class CodeBaseExtractGithub:
         return self.model
     
     def _build_model(self, path, content):
-        print(path)
         model = {'name': os.path.basename(path),
                  'type': 'folder', 'keywords': [], 'children': []}
         # Check if the path is a directory
