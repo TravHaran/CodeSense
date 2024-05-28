@@ -1,10 +1,10 @@
-from utilities.utility import obj_to_json
-from app import App
 import threading
 from queue import Queue
 import sys
 
 sys.path.insert(0, "..")
+from utilities.utility import obj_to_json
+from app import App
 '''
 define a class that can accept a list of codebases and model them
 - use multithreading
@@ -22,7 +22,7 @@ class BatchModel:
         self.input_codebases = codebases
         self.result = []
 
-    def model_codebase(self, q, output_list) -> dict:
+    def model_codebase(self, q, output_list):
         while True:
             entry = q.get()
             codebase = entry[0]
@@ -31,7 +31,7 @@ class BatchModel:
             output_list.append(model)
             q.task_done()
 
-    def run(self):
+    def run(self) -> dict:
         for i in range(self.num_threads):
             worker = threading.Thread(
                 target=self.model_codebase, daemon=True, args=(self.q, self.result))

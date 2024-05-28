@@ -43,7 +43,7 @@ class TraverseCodebase:
                 self._get_top_nodes(child, input_keywords)
 
     def build_result(self, n, input_keywords):
-        result = {"input_keywords": input_keywords, "results": []}
+        result = {"question": "", "answer": "", "input_keywords": input_keywords, "results": []}
         for entry in self.top_nodes_with_score:
             score = entry[0]
             node = entry[1]
