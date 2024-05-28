@@ -14,15 +14,19 @@ Create a class to populate the codebase json with annotations
 '''
 
 class PopulateAnnotations:
-    def __init__(self, model_obj, ignore_paths_file):
-        #ignore_paths is a txt file containing file_paths to ignore
+    def __init__(self, model_obj, ignore_paths):
+        #ignore_paths could be a txt file or a json object containing file_paths to ignore
         self.annotator = AnnotationGeneration()
         self.model = model_obj
-        self.ignore_list = self.build_ignore_list(ignore_paths_file)
+        self.ignore_list = self.build_ignore_list(ignore_paths)
     
-    def build_ignore_list(self, txt_file):
-        # read txt file as string
-        ignore_list = file_to_string(txt_file).splitlines()
+    def build_ignore_list(self, ignore_paths):
+        ignore_list = []
+        if type(ignore_paths) == str: # the input is a txt file path as a string
+            # read txt file as string
+            ignore_list = file_to_string(ignore_paths).splitlines()
+        else: # the input is an object, i.e.: {"ignore" : ["path1", "path2", "path3"]}
+            ignore_list = ignore_paths["ignore"]
         return ignore_list
         
     
