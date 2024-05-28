@@ -17,30 +17,59 @@ class BatchModel:
     def __init__(self, codebases: list[(str, dict)]):
         # TODO implement a thread pool such that if the number of input codebases is below the maxthreads limit 
         # it runs all operations within the pool, but if not if allocates enough pools to complete the batch request
-        self.num_threads = len(codebases) # change this to something like 5.
+        self.max_threads = 5 
         self.q = Queue(maxsize=0)
         self.input_codebases = codebases
         self.result = []
-
-    def model_codebase(self, q, output_list):
-        while True:
-            entry = q.get()
+        
+    def model_codebase(self, codebase, ignores):
+        model = App().model_code_base(codebase, ignores)
+        self.q.put(model)
+    
+    def run(self) -> dict:
+        if len(self.input_codebases) > self.max_threads:
+            self._run_multi_pool()
+        else:
+            self._run_single_pool()
+        return self._build_result()
+        
+    
+    def _run_single_pool(self):
+        threads = []
+        for entry in self.input_codebases:
             codebase = entry[0]
             ignores = entry[1]
-            model = App().model_code_base(codebase, ignores)
-            output_list.append(model)
-            q.task_done()
-
-    def run(self) -> dict:
-        for i in range(self.num_threads):
-            worker = threading.Thread(
-                target=self.model_codebase, daemon=True, args=(self.q, self.result))
-            worker.start()
-
+            threads.append(threading.Thread(target=self.model_codebase, args=(codebase, ignores)))
+            
+        for x in threads:
+            x.start()
+        for x in threads:
+            x.join()
+    
+    def _run_multi_pool(self):
+        threads = []
         for entry in self.input_codebases:
-            self.q.put(entry)
-        self.q.join()
-        return self.result
+            codebase = entry[0]
+            ignores = entry[1]
+            threads.append(threading.Thread(target=self.model_codebase, args=(codebase, ignores)))
+        
+        for i in range(0, len(threads), self.max_threads):
+            pool = threads[i: i+self.max_threads]
+            for j in pool:
+                j.start()
+            for j in pool:
+                j.join()
+    
+    def _build_result(self):
+        while not self.q.empty():
+            model = self.q.get()
+            self.result.append(model)
+        output = {"results": self.result}
+        return output
+        
+        
+            
+        
 
 
 class TestBatchModel:
@@ -53,8 +82,7 @@ class TestBatchModel:
 
     def test_batch(self):
         batchModel = BatchModel(self.test_codebases_list)
-        output = {"results": []}
-        output["results"] = batchModel.run()
+        output = batchModel.run()
         obj_to_json("../out", "batch_model_codebase", output)
 
 
