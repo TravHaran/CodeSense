@@ -3,27 +3,19 @@ from pydantic import BaseModel
 class ModelRequest(BaseModel):
     path: str
     ignore: list[str] = []
-
-class CodebaseModel(BaseModel):
-    name: str
-    path: str
-    type: str
-    keywords: list[str]
-    children: list = []
-
+    def __getitem__(self, item):
+        return getattr(self, item)
 
 class BatchModelRequest(BaseModel):
-    models: list[ModelRequest]
+    models: list[ModelRequest] 
 
-class BatchModelResponse(BaseModel):
-    results: list[CodebaseModel]
 
 class QueryRequest(BaseModel):
     question: str
     limit: int
-    model: CodebaseModel
+    path: str
 
 class BatchQueryRequest(BaseModel):
     question: str
     limit: int
-    batch_models: BatchModelResponse
+    models: list[str] = []

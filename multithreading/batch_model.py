@@ -30,7 +30,7 @@ class BatchModel:
 
     def run(self) -> dict:
         for entry in self.input_codebases:
-            codebase = entry['codebase_path']
+            codebase = entry['path']
             ignores = entry['ignore']
             self.threads.append(threading.Thread(
                 target=self.model_codebase, args=(codebase, ignores)))

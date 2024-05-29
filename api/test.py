@@ -15,7 +15,7 @@ class TestAPI:
     def test_model(self):
         print("TESTING ENDPOINT: /model\n")
         print(f"REQUEST: \n{self.test_model_request}\n")
-        response = requests.get(url=f"{self.url}/model", json=self.test_model_request).json()
+        response = requests.post(url=f"{self.url}/model", json=self.test_model_request).json()
         print("RESPONSE:\n")
         print(response)
         print("\n")
@@ -24,7 +24,7 @@ class TestAPI:
     
     def test_batch_model(self):
         print("TESTING ENDPOINT: /batchModel\n")
-        response = requests.get(url=f"{self.url}/model", json=self.test_batch_model_request).json()
+        response = requests.post(url=f"{self.url}/batchModel", json=self.test_batch_model_request).json()
         print("RESPONSE:\n")
         print(response)
         print("\n")
@@ -33,7 +33,7 @@ class TestAPI:
     
     def test_query(self):
         print("TESTING ENDPOINT: /query\n")
-        response = requests.get(url=f"{self.url}/model", json=self.test_query_request).json()
+        response = requests.get(url=f"{self.url}/query", json=self.test_query_request).json()
         print("RESPONSE:\n")
         print(response)
         print("\n")
@@ -42,7 +42,7 @@ class TestAPI:
     
     def test_batch_query(self):
         print("TESTING ENDPOINT: /batchQuery\n")
-        response = requests.get(url=f"{self.url}/model", json=self.test_batch_query_request).json()
+        response = requests.get(url=f"{self.url}/batchQuery", json=self.test_batch_query_request).json()
         print("RESPONSE:\n")
         print(response)
         print("\n")

@@ -28,16 +28,22 @@ class App:
     
     def query_code_base(self, code_base_model: dict, question: str, search_result_limit: int) -> dict:
         # Extract Keywords
+        print("EXTRACTING KEYWORDS")
         extract_keywords = KeywordExtract()
         query_keywords = extract_keywords.extract(question)
+        print(f"EXTRACTED KEYWORDS: {query_keywords}")
         # Traverse Tree
+        print("TRAVERSING TREE")
         traverser = TraverseCodebase(code_base_model)
         search_result = traverser.get_top_nodes(query_keywords, search_result_limit)
+        print(f"TREE TRAVERSAL: {search_result}")
         # Question Answer
+        print("ANSWERING QUESTION")
         responder = QueryAnswer(search_result)
         response = responder.get_response(question)
         search_result['question'] = question
         search_result['answer'] = response
+        print(f"SEARCH RESULT WITH ANSWER: {search_result}")
         return search_result
 
 class TestApp:
