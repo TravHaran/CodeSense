@@ -1,6 +1,7 @@
 from codebase_extract.codebase_extract import CodebaseExtract
 from codebase_extract.github_codebase_extract import CodeBaseExtractGithub
 from populate_annotations.populate_annotations import PopulateAnnotations
+from populate_annotations.batch_populate_annotations import BatchPopulateAnnotations
 from populate_keywords.populate_keywords import PopulateKeywords
 from keyword_extract.keyword_extract import KeywordExtract
 from tree_traverse.tree_traverse import TraverseCodebase
@@ -16,8 +17,10 @@ class App:
             codebase_extractor = CodebaseExtract(code_base_path)
         code_base_model = codebase_extractor.get_model()
         # Populate Annotations
-        populate_annotations = PopulateAnnotations(code_base_model, ignore_paths)
-        code_base_model = populate_annotations.populate_model()
+        # populate_annotations = PopulateAnnotations(code_base_model, ignore_paths)
+        # code_base_model = populate_annotations.populate_model()
+        populate_annotations = BatchPopulateAnnotations(code_base_model, ignore_paths)
+        code_base_model = populate_annotations.batch_annotate()
         # Populate Keywords
         populate_keywords = PopulateKeywords(code_base_model)
         code_base_model = populate_keywords.populate_model()
@@ -40,7 +43,7 @@ class App:
 class TestApp:
     def __init__(self):
         self.test_github_repo = "https://github.com/TravHaran/rust-calculator"
-        self.test_ignore = {"ignore" : []}
+        self.test_ignore = []
         self.app = App()
     
     def test_run(self):

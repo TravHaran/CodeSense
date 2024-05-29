@@ -1,0 +1,26 @@
+{
+    "detail": [
+        {
+            "type": "missing",
+            "loc": [
+                "body",
+                "path"
+            ],
+            "msg": "Field required",
+            "input": {
+                "models": [
+                    {
+                        "path": "https://github.com/TravHaran/rust-calculator",
+                        "ignore": []
+                    },
+                    {
+                        "path": "https://github.com/sachinl0har/Basic-Calc",
+                        "ignore": [
+                            "README.md"
+                        ]
+                    }
+                ]
+            }
+        }
+    ]
+}
