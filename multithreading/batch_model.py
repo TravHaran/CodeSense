@@ -35,7 +35,7 @@ class BatchModel:
             self.threads.append(threading.Thread(
                 target=self.model_codebase, args=(codebase, ignores)))
             
-        if len(self.input_codebases) > self.max_threads:
+        if len(self.threads) > self.max_threads:
             self._run_multi_pool()
         else:
             self._run_single_pool()
