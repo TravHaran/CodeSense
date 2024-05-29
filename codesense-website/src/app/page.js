@@ -6,7 +6,7 @@ import styles from './page.module.css'
 import { Fragment, useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion';
 import Modal from 'react-modal';
-import bg from '../../public/background.jpg'
+import bg from '../../public/background.jpeg'
 // import Graph from 'react-json-graph';
 // import test_codebase from '../../public/test_github_codebase.json'
 // const fs = require("fs/promises");
@@ -83,7 +83,7 @@ export default function Home() {
       setIsModelling(true);
     set_codebase_modelled(false)
     notification('positive', 'Codebase Modelling in progress..')
-localStorage.setItem('githubLinks', JSON.stringify(repositoryList))
+localStorage.setItem('githubLinks', JSON.stringify(repoList))
     localStorage.setItem('ignoreFiles', ignoreFiles)
     const bookTitleAndAuthor = JSON.stringify({
       githubLink
@@ -130,18 +130,23 @@ localStorage.setItem('githubLinks', JSON.stringify(repositoryList))
     localStorage.removeItem('ignoreFiles')
     setRepoList([])
     set_codebase_modelled(false)
+    setIgnoreFiles([])
     setQuery("")
     setQuerying(false)
     setResponseRecieved(false)
   }
 
   useEffect(() => {
-    if (localStorage.getItem("githubLinks") !== null) {
+    if (localStorage.getItem("githubLinks") && JSON.parse(localStorage.getItem("githubLinks").length !== 2)) {
       set_codebase_modelled(true)
       setRepoList(JSON.parse(localStorage.getItem("githubLinks")))
-      console.log(JSON.parse(localStorage.getItem("githubLinks")))
+      console.log(JSON.parse(localStorage.getItem("githubLinks").length))
+    } else {
+      console.log('none')
+      handleRestart()
     }
   }, [])
+
   useEffect(() => {
     if (responseRecieved) {
       setQuerying(false)
@@ -160,7 +165,7 @@ localStorage.setItem('githubLinks', JSON.stringify(repositoryList))
 
   const handleAddRepo = async () => {
     if (githubLink !== "") {
-      if (githubLink.includes("github.com/")) {
+      if (githubLink.includes("github.com/") && githubLink.split('/').length == 5) {
         setRepoList(repoList => [...repoList, githubLink])
       } else {
         notification('error', 'Error: Please enter a Github repository link')
@@ -170,8 +175,6 @@ localStorage.setItem('githubLinks', JSON.stringify(repositoryList))
       notification('error', "Error: Please enter a Github Repository link before continuing")
     }
     setGithubLink("")
-    setGithubLink("")
-    console.log(repoList)
   }
 
   const handleAddIgnoreFile = () => {
@@ -207,9 +210,9 @@ localStorage.setItem('githubLinks', JSON.stringify(repositoryList))
       <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
       <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
     <div className={styles.titleSmall}>
-      <button className={styles.restart} onClick={(e) => {e.preventDefault(); handleRestart()}}><span class="material-symbols-outlined">
+      <motion.button transition={{duration: 0.4}} whileHover={{scale: 1.1, color: '#C41E3A'}} whileTap={{scale: 0.9}} className={styles.restart} onClick={(e) => {e.preventDefault(); handleRestart()}}><span class="material-symbols-outlined">
 exit_to_app
-</span></button>
+</span></motion.button>
     <h1 className={styles.title}>Codesense</h1>
     <motion.div style={{ left: -30 }} animate={codebase_modelled ? {scale:0.5, height:'100px'} : {}} className={codebase_modelled ? styles.inputContainerSmall : styles.inputContainer}>
     {!localStorage.getItem('githubLinks') ? (
@@ -217,11 +220,17 @@ exit_to_app
           
         </div>
         <div className={styles.repoContainer}>
-          {repoList.map(repo => 
+          <div className={styles.addedRepoContainer}>
+            {repoList.map(repo => 
               <li>{repo}</li>
             )}
+          </div>
+          
             <div className={styles.mainInputAndButton}>
+              {!isModelling &&
               <motion.button whileHover={{scale: 1.1}} whileTap={{scale: 0.9}} onClick={handleAddRepo} className={styles.addRepository}><span class="material-symbols-outlined">add</span></motion.button>
+              }
+              
           <form onSubmit={(e) => {e.preventDefault(); handleAddRepo()}}>
           <input
               type="url"
@@ -229,14 +238,18 @@ exit_to_app
               id="book"
               className={styles.bookInput}
               autoFocus
+              disabled={isModelling ? true : false}
               onChange={(e) => {setGithubLink(e.target.value);}}
               placeholder="Enter Github URL"
             />
             
             </form>
+            {!isModelling &&
             <motion.button whileHover={{scale: 1.1}} whileTap={{scale: 0.9}} onClick={(e) => {e.preventDefault(); handleSubmit()}} className={styles.submitRepo}><span class="material-symbols-outlined">
 arrow_forward_ios
 </span></motion.button>
+            }
+            
             </div>
           
             
@@ -244,10 +257,13 @@ arrow_forward_ios
         
           
             <form onSubmit={(e) => {e.preventDefault(); handleAddIgnoreFile()}}>
-              <h3>Ignore Files List</h3>
-            {ignoreFiles.map(file =>
+              <h3 className={styles.ignoreHeader}>Ignore Files List</h3>
+              <div className={styles.ignoreFilesList}>
+                {ignoreFiles.map(file =>
     <li>{file}</li>
   )}
+              </div>
+            
               <input className={styles.ignoreInput} value={ignoreFile} onChange={(e)=> {setIgnoreFile(e.target.value)}} placeholder="Name of File"/>
             <button onClick={(e) => {e.preventDefault(); handleAddIgnoreFile()}} className={styles.buttonStyle}>Add</button>
               </form>
@@ -299,7 +315,19 @@ arrow_forward_ios
           {!responseRecieved &&
           <p className={styles.enterQuestion}><b>ENTER CODEBASE QUERY: </b></p>
           }<form onSubmit={(e) => {e.preventDefault(); handleSubmitQuery(query)}}>
-            <input id="query" disabled={responseRecieved ? true : false} className={!responseRecieved ? styles.queryInputBefore : styles.queryInputAfter} onChange={(e) => {setQuery(e.target.value);}} value={query}/>
+            <div className={styles.queryContainer}>
+<div className={styles.queryInputContainer}>
+<textarea id="query" disabled={ querying ? true : false || responseRecieved ? true : false} className={!responseRecieved ? styles.queryInputBefore : styles.queryInputAfter} onChange={(e) => {setQuery(e.target.value);}} value={query}/>
+
+            </div>
+            {!querying && !responseRecieved &&
+            <button className={styles.submitQueryButton} type='submit'><span class="material-symbols-outlined">
+arrow_forward_ios
+</span></button>
+            }
+            
+            </div>
+            
           {responseRecieved &&
           <button className={styles.newQuestionButton} onClick={() => {setQuery(""); setQuerying(false); setResponseRecieved(false); setTimeout(function(){
             document.getElementById("query").focus()
@@ -308,10 +336,14 @@ arrow_forward_ios
         </span></button>
           }</form>
           {responseRecieved &&
-          <div className={styles.response}>
-            <p id="response">{response}</p>
+          <div className={styles.responseContainer}>
+<div className={styles.response}>
+            <p  id="response">{response}</p>
               
           </div>
+
+          </div>
+          
           
           }
           
