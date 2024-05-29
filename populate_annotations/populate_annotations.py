@@ -46,8 +46,12 @@ class PopulateAnnotations:
 class TestPopulateAnnotations:
     def __init__(self):
         self.test_model = json_to_obj("test_github_codebase.json") 
-        self.test_ignore_file = "ignore.txt"
-        self.populator = PopulateAnnotations(self.test_model, self.test_ignore_file)
+        self.test_ignore_files = [
+            "codesense/keyword_extract",
+            "codesense/extras/codebase_extraction/codebase.json",
+            "codesense/README.md"
+        ]
+        self.populator = PopulateAnnotations(self.test_model, self.test_ignore_files)
         
     def test_populate_annotations(self):
         print("Testing annotation population")
