@@ -18,17 +18,7 @@ class PopulateAnnotations:
         #ignore_paths could be a txt file or a json object containing file_paths to ignore
         self.annotator = AnnotationGeneration()
         self.model = model_obj
-        self.ignore_list = self.build_ignore_list(ignore_paths)
-    
-    def build_ignore_list(self, ignore_paths):
-        ignore_list = []
-        if type(ignore_paths) == str: # the input is a txt file path as a string
-            # read txt file as string
-            ignore_list = file_to_string(ignore_paths).splitlines()
-        else: # the input is an object, i.e.: {"ignore" : ["path1", "path2", "path3"]}
-            ignore_list = ignore_paths["ignore"]
-        return ignore_list
-        
+        self.ignore_list = ignore_paths
     
     def annotate(self, content_str):
         formated_str = content_str.replace("\n", "") # remove newline characters
@@ -56,8 +46,12 @@ class PopulateAnnotations:
 class TestPopulateAnnotations:
     def __init__(self):
         self.test_model = json_to_obj("test_github_codebase.json") 
-        self.test_ignore_file = "ignore.txt"
-        self.populator = PopulateAnnotations(self.test_model, self.test_ignore_file)
+        self.test_ignore_files = [
+            "codesense/keyword_extract",
+            "codesense/extras/codebase_extraction/codebase.json",
+            "codesense/README.md"
+        ]
+        self.populator = PopulateAnnotations(self.test_model, self.test_ignore_files)
         
     def test_populate_annotations(self):
         print("Testing annotation population")

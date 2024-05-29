@@ -22,18 +22,9 @@ class BatchPopulateAnnotations:
         self.q = Queue(maxsize=0)
         self.annotator = AnnotationGeneration()
         self.model = model_obj
-        self.ignore_list = self.build_ignore_list(ignore_paths)
+        self.ignore_list = ignore_paths
         self.files_to_annotate = []
         self.annotation_map = {}
-    
-    def build_ignore_list(self, ignore_paths):
-        ignore_list = []
-        if type(ignore_paths) == str: # the input is a txt file path as a string
-            # read txt file as string
-            ignore_list = file_to_string(ignore_paths).splitlines()
-        else: # the input is an object, i.e.: {"ignore" : ["path1", "path2", "path3"]}
-            ignore_list = ignore_paths["ignore"]
-        return ignore_list
     
     def get_files_to_annotate(self):
         self._get_files_to_annotate(self.model)
@@ -110,8 +101,12 @@ class BatchPopulateAnnotations:
 class TestBatchPopulateAnnotations:
     def __init__(self):
         self.test_model = json_to_obj("test_github_codebase.json") 
-        self.test_ignore_file = "ignore.txt"
-        self.populator = BatchPopulateAnnotations(self.test_model, self.test_ignore_file)    
+        self.test_ignore_files = [
+            "codesense/keyword_extract",
+            "codesense/extras/codebase_extraction/codebase.json",
+            "codesense/README.md"
+        ]
+        self.populator = BatchPopulateAnnotations(self.test_model, self.test_ignore_files)    
     
     def test_batch_populate(self):
         print("Testing batch annotation population")

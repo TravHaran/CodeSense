@@ -30,8 +30,8 @@ class BatchModel:
 
     def run(self) -> dict:
         for entry in self.input_codebases:
-            codebase = entry[0]
-            ignores = entry[1]
+            codebase = entry['codebase_path']
+            ignores = entry['ignore']
             self.threads.append(threading.Thread(
                 target=self.model_codebase, args=(codebase, ignores)))
             
@@ -66,9 +66,8 @@ class BatchModel:
 class TestBatchModel:
     def __init__(self):
         self.test_codebases_list = [
-            ("https://github.com/TravHaran/rust-calculator", {"ignore": []}),
-            ("https://github.com/sachinl0har/Basic-Calc",
-             {"ignore": ["README.md"]})
+            {'codebase_path': "https://github.com/TravHaran/rust-calculator", 'ignore': []},
+            {'codebase_path': "https://github.com/sachinl0har/Basic-Calc", 'ignore': ["README.md"]}
         ]
 
     def test_batch(self):
