@@ -1,20 +1,25 @@
-from fastapi import FastAPI, Query, HTTPException, Path
+from fastapi import FastAPI, Query, HTTPException, Path, Request, HTTPException
 from models import ModelRequest, BatchModelRequest, QueryRequest, BatchQueryRequest
 from typing import Optional, List
 import json 
 from datetime import datetime
+from typing import Dict, Any
+from pydantic import BaseModel
 
 import sys
 sys.path.insert(0, "..")
 from app import App 
+import logging
 from codebase_extract.github_codebase_extract import CodeBaseExtractGithub
 from multithreading.batch_model import BatchModel
 from multithreading.batch_query import BatchQuery
 from utilities.utility import json_to_obj, obj_to_json
 
 app = FastAPI()
+logging.basicConfig(level=logging.DEBUG)
 
 @app.post('/model')
+
 async def model(request: ModelRequest):
     codebase_path = request.path
     extractor = CodeBaseExtractGithub(codebase_path)
@@ -28,7 +33,6 @@ async def model(request: ModelRequest):
     save_file_name = f"{repo_owner}_{repo_name}"
     obj_to_json("database/models", save_file_name, response)
     return response
-
 @app.post('/batchModel')
 async def batchModel(request: BatchModelRequest):
     model_requests = request.models
