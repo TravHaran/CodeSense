@@ -20,7 +20,7 @@ class AnnotationAggregate:
     def aggregate_annotations(self):
         for entry in self.result_model["results"]:
             node = entry["node"]
-            self.annotations.append((node["name"], node["annotation"]))
+            self.annotations.append((node["name"], node["annotation"], node["content"]))
         return self.format_output()
     
     def format_output(self):
@@ -30,7 +30,8 @@ class AnnotationAggregate:
             count += 1
             name = entry[0]
             annotation = entry[1]
-            output += str(f"FILENAME: {name}\nDESCRIPTION: \"{annotation}\"\n\n")
+            content = entry[2]
+            output += f"FILENAME: {name}\nDESCRIPTION: \"{annotation}\"\nCONTENT: \n{content}\n\n"
         return output
 
 
