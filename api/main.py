@@ -1,5 +1,5 @@
 from fastapi import FastAPI, Query, HTTPException, Path, Request, HTTPException
-from models import ModelRequest, BatchModelRequest, QueryRequest, BatchQueryRequest
+from models import ModelRequest, BatchModelRequest, QueryRequest, BatchQueryRequest, SearchRequest
 from typing import Optional, List
 import json 
 from datetime import datetime
