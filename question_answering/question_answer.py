@@ -20,11 +20,25 @@ class QueryAnswer:
     def __init__(self, traverse_obj):
         self.res = ""
         self.traversal = traverse_obj
-        aggregator = AnnotationAggregate(self.traversal)
-        self.context = aggregator.aggregate_annotations()
-
-    ## Set the API Key
+        self.context = self.pre_process()
+    
+    def pre_process(self) -> str:
+        context = ""
+        if self.traversal['results'] != []:
+            aggregator = AnnotationAggregate(self.traversal)
+            context = aggregator.aggregate_annotations()
+        return context    
+        
     def get_response(self, query):
+        response = ""
+        if self.context == "":
+            response = f"Your question did not match any files\n\nSuggestions:\n\n- Make sure all words are spelled correctly.\n- Try different keywords.\n- Try more general keywords"
+        else:
+            response = self._generate_response(query)
+        return response
+    
+    ## Set the API Key
+    def _generate_response(self, query):
         load_dotenv()
         API_KEY = os.getenv('OPENAI_SECRET_API_KEY')
         client = OpenAI(api_key=API_KEY)
@@ -64,18 +78,30 @@ class QueryAnswer:
 
 ### TESTING 
 class TestQueryAnswering:
-     def __init__(self):
-        self.test_model = json_to_obj("top_5.json")
-        self.responder = QueryAnswer(self.test_model)
+    def __init__(self):
+        self.test_traverse = json_to_obj("top_5.json")
+        self.test_traverse_empty = json_to_obj("top_0.json")
+        
         print("Testing Query Response... \n")
     
-     def test_keyword_extract_explanation(self):
+    
+    def test_query_with_no_matching_files(self):
+        responder = QueryAnswer(self.test_traverse_empty)
+        query="daslfjadslkf"
+        expected_response = f"Your question did not match any files\n\nSuggestions:\n\n- Make sure all words are spelled correctly.\n- Try different keywords.\n- Try more general keywords"
+        output = responder.get_response(query)
+        print(output)
+        assert output == expected_response      
+    
+    def test_keyword_extract_explanation(self):
+        responder = QueryAnswer(self.test_traverse)
         query="How does keyword extraction work in this project?"
-        output = self.responder.get_response(query)
+        output = responder.get_response(query)
         print(output)
         assert type(output) == str
     
 
 if __name__ == "__main__":
     TestQueryAnswering = TestQueryAnswering()
+    TestQueryAnswering.test_query_with_no_matching_files()
     TestQueryAnswering.test_keyword_extract_explanation()

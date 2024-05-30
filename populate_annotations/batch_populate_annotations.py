@@ -43,7 +43,7 @@ class BatchPopulateAnnotations:
     def annotate(self, file_model):
         content_str = file_model["content"]
         formated_str = content_str.replace("\n", "") # remove newline characters
-        annotation = self.annotator.snippet_summary(formated_str) # comment this out to stub API call for testing purposes
+        annotation = self.annotator.run(formated_str) # comment this out to stub API call for testing purposes
         # annotation = "test"
         path = file_model["path"]
         self.q.put((path, annotation))
