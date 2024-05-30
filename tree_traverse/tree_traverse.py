@@ -36,7 +36,8 @@ class TraverseCodebase:
         if model["type"] == "file":
             # get matching keyword score
             score = compute_score(model["keywords"], input_keywords)
-            self.top_nodes_with_score.append((score, model))
+            if score > 0:
+                self.top_nodes_with_score.append((score, model))
             return model
         else:
             for child in model["children"]:
@@ -62,6 +63,12 @@ class TestTraverseCodebase:
     def __init__(self):
         self.test_model = json_to_obj("test_codebase.json")
         self.traverser = TraverseCodebase(self.test_model)
+    
+    def test_return_empty_traversal(self):
+        print(f"Testing Traverse Codebase to return empty result, i.e. no matching keywords")
+        input_keywords = ["dskafjhaiuraefwkzdahsx"]
+        updated_model = self.traverser.get_top_nodes(input_keywords, 5)
+        assert updated_model['results'] == []
 
     def test_save_top_1_nodes(self):
         print(f"Testing Traverse Codebase to save top 1 nodes")
@@ -90,6 +97,7 @@ class TestTraverseCodebase:
 
 if __name__ == "__main__":
     testTraverseCodebase = TestTraverseCodebase()
+    testTraverseCodebase.test_return_empty_traversal()
     testTraverseCodebase.test_save_top_1_nodes()
     testTraverseCodebase.test_save_top_3_nodes()
     testTraverseCodebase.test_save_top_5_nodes()
