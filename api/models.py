@@ -9,6 +9,9 @@ class ModelRequest(BaseModel):
 class BatchModelRequest(BaseModel):
     models: list[ModelRequest] 
 
+class SearchRequest(BaseModel):
+    question: str
+    path: str
 
 class QueryRequest(BaseModel):
     question: str

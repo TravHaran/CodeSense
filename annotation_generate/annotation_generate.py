@@ -1,6 +1,8 @@
 from openai import OpenAI
 import os
 from dotenv import load_dotenv
+from markdown import Markdown
+from io import StringIO
 
 '''
 Create a class to annotate a piece of given code
@@ -13,17 +15,21 @@ Create a class to annotate a piece of given code
 class AnnotationGeneration:
     def __init__(self):
         self.res = ""
+    
+    def run(self, snippet):
+        annotation = self.snippet_summary(snippet)
+        return self._markdown_to_plaintxt(annotation)
+    
+    def _snippet_summary(self, snippet):
+        ## Set the API Key
+        load_dotenv()
+        API_KEY = os.getenv('OPENAI_SECRET_API_KEY')
+        client = OpenAI(api_key=API_KEY)
 
-    def snippet_summary(self, snippet):
-            ## Set the API Key
-            load_dotenv()
-            API_KEY = os.getenv('OPENAI_SECRET_API_KEY')
-            client = OpenAI(api_key=API_KEY)
+        #GPT4o REPONSE REQUEST
+        MODEL="gpt-4o"
 
-            #GPT4o REPONSE REQUEST
-            MODEL="gpt-4o"
-
-            completion = client.chat.completions.create(
+        completion = client.chat.completions.create(
             model=MODEL,
             #Prompt modelling, grounding the model to provide a more concise and clear summary when given a piece of code
             messages=[
@@ -52,8 +58,31 @@ class AnnotationGeneration:
                     {snippet}
                 '''}
             ]
-            )
-            return completion.choices[0].message.content
+        )
+        
+        return completion.choices[0].message.content
+    
+    def _unmark_element(self, element, stream=None):
+        if stream is None:
+            stream = StringIO()
+        if element.text:
+            stream.write(element.text)
+        for sub in element:
+            self.unmark_element(sub, stream)
+        if element.tail:
+            stream.write(element.tail)
+        return stream.getvalue()
+
+    
+    def _markdown_to_plaintxt(self, marked_txt):
+        # patch Markdown
+        Markdown.output_format["plain"] = self._unmark_element
+        __md = Markdown(output_format="plain")
+        __md.stripTopLevelTags = False
+        # convert txt
+        result = __md.convert(marked_txt)
+        return result
+        
     
 
 ### TESTING 
@@ -125,7 +154,7 @@ class TestSnippetSummary:
                 }
                 
       }'''
-          output = self.summarizer.snippet_summary(code_snippet)
+          output = self.summarizer.run(code_snippet)
           print(f"CODE SUMMARY: \n{output} \n\n")
           assert type(output) == str
 
@@ -157,7 +186,7 @@ class TestSnippetSummary:
                     res.append(n)
                     if len(res) == k:
                         return res'''
-          output = self.summarizer.snippet_summary(code_snippet)
+          output = self.summarizer.run(code_snippet)
           print(f"CODE SUMMARY: \n{output} \n\n")
           assert type(output) == str
           '''

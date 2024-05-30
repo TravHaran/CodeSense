@@ -19,7 +19,6 @@ app = FastAPI()
 logging.basicConfig(level=logging.DEBUG)
 
 @app.post('/model')
-
 async def model(request: ModelRequest):
     codebase_path = request.path
     extractor = CodeBaseExtractGithub(codebase_path)
@@ -33,6 +32,7 @@ async def model(request: ModelRequest):
     save_file_name = f"{repo_owner}_{repo_name}"
     obj_to_json("database/models", save_file_name, response)
     return response
+
 @app.post('/batchModel')
 async def batchModel(request: BatchModelRequest):
     model_requests = request.models
@@ -48,6 +48,26 @@ async def batchModel(request: BatchModelRequest):
     save_file_name = f"{codebase_paths}"
     obj_to_json("database/batch_models", save_file_name, response)
     return response
+
+@app.get('/search')
+async def search(request: SearchRequest):
+    codebase_path = request.path
+    question = request.question
+    
+    extractor = CodeBaseExtractGithub(codebase_path)
+    repo_owner = extractor.owner
+    repo_name = extractor.repo_name
+    model_name = f"{repo_owner}_{repo_name}"
+    # get model
+    model = json_to_obj(f"database/models/{model_name}.json")
+    response = App().search_code_base(model, question)
+    now = str(datetime.now())
+    # save response
+    save_file_name = f"query_response_{now}"
+    obj_to_json("database/queries", save_file_name, response)
+    return response
+    
+    
 
 @app.get('/query')
 async def query(request: QueryRequest):

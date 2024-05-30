@@ -79,14 +79,14 @@ class QueryAnswer:
 ### TESTING 
 class TestQueryAnswering:
     def __init__(self):
-        self.test_model = json_to_obj("top_5.json")
-        self.test_model_empty = json_to_obj("top_0.json")
+        self.test_traverse = json_to_obj("top_5.json")
+        self.test_traverse_empty = json_to_obj("top_0.json")
         
         print("Testing Query Response... \n")
     
     
     def test_query_with_no_matching_files(self):
-        responder = QueryAnswer(self.test_model_empty)
+        responder = QueryAnswer(self.test_traverse_empty)
         query="daslfjadslkf"
         expected_response = f"Your question did not match any files\n\nSuggestions:\n\n- Make sure all words are spelled correctly.\n- Try different keywords.\n- Try more general keywords"
         output = responder.get_response(query)
@@ -94,7 +94,7 @@ class TestQueryAnswering:
         assert output == expected_response      
     
     def test_keyword_extract_explanation(self):
-        responder = QueryAnswer(self.test_model)
+        responder = QueryAnswer(self.test_traverse)
         query="How does keyword extraction work in this project?"
         output = responder.get_response(query)
         print(output)

@@ -22,7 +22,7 @@ class PopulateAnnotations:
     
     def annotate(self, content_str):
         formated_str = content_str.replace("\n", "") # remove newline characters
-        output = self.annotator.snippet_summary(formated_str) # comment this out to stub API call for testing purposes
+        output = self.annotator.run(formated_str) # comment this out to stub API call for testing purposes
         # output = "test"
         return output
     

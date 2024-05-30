@@ -6,7 +6,8 @@ from populate_keywords.populate_keywords import PopulateKeywords
 from keyword_extract.keyword_extract import KeywordExtract
 from tree_traverse.tree_traverse import TraverseCodebase
 from question_answering.question_answer import QueryAnswer
-from utilities.utility import obj_to_json
+from question_answering.search import Search
+from utilities.utility import obj_to_json, json_to_obj
 
 class App:
     def model_code_base(self, code_base_path: str, ignore_paths) -> dict:
@@ -26,6 +27,24 @@ class App:
         code_base_model = populate_keywords.populate_model()
         return code_base_model
     
+    def search_code_base(self, code_base_model: dict, question: str) -> dict:
+        # Extract Keywords
+        # print("EXTRACTING KEYWORDS")
+        extract_keywords = KeywordExtract()
+        query_keywords = extract_keywords.extract(question)
+        # print(f"EXTRACTED KEYWORDS: {query_keywords}")
+        # Traverse Tree
+        # print("TRAVERSING TREE")
+        traverser = TraverseCodebase(code_base_model)
+        search_result = traverser.get_top_nodes(query_keywords, None)
+        search_result['question'] = question
+        # print(f"TREE TRAVERSAL: {search_result}")
+        # Search Results
+        # print("SEARCHING")
+        responder = Search(search_result)
+        results = responder.run()
+        return results
+    
     def query_code_base(self, code_base_model: dict, question: str, search_result_limit: int) -> dict:
         # Extract Keywords
         print("EXTRACTING KEYWORDS")
@@ -36,12 +55,12 @@ class App:
         print("TRAVERSING TREE")
         traverser = TraverseCodebase(code_base_model)
         search_result = traverser.get_top_nodes(query_keywords, search_result_limit)
+        search_result['question'] = question
         print(f"TREE TRAVERSAL: {search_result}")
         # Question Answer
         print("ANSWERING QUESTION")
         responder = QueryAnswer(search_result)
         response = responder.get_response(question)
-        search_result['question'] = question
         search_result['answer'] = response
         print(f"SEARCH RESULT WITH ANSWER: {search_result}")
         return search_result
@@ -51,6 +70,15 @@ class TestApp:
         self.test_github_repo = "https://github.com/TravHaran/rust-calculator"
         self.test_ignore = []
         self.app = App()
+        
+    def test_search(self):
+        print("TESTING SEARCH")
+        model = json_to_obj("./out/TravHaran_rust-calculator.json")
+        question = "Does this project have a multiplication capability?"
+        print(f"Q: {question}")
+        response = self.app.search_code_base(model, question)
+        obj_to_json("./out", "test_search", response)
+        print(response)
     
     def test_run(self):
         print(f"modelling codebase from repo: {self.test_github_repo}")
@@ -81,5 +109,6 @@ class TestApp:
         
 if __name__ == "__main__":
     testApp = TestApp()
-    testApp.test_run()     
+    # testApp.test_run()   
+    testApp.test_search()  
         
