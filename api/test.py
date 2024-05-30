@@ -10,6 +10,7 @@ class TestAPI:
         self.test_model_request = json_to_obj('test_files/test_model_request.json')
         self.test_batch_model_request = json_to_obj('test_files/test_batch_model_request.json')
         self.test_query_request = json_to_obj('test_files/test_query_request.json')
+        self.test_null_query_request = json_to_obj('test_files/test_null_query_request.json')
         self.test_search_request = json_to_obj('test_files/test_search_request.json')
         self.test_batch_query_request = json_to_obj('test_files/test_batch_query_request.json')
         
@@ -41,6 +42,15 @@ class TestAPI:
         obj_to_json('test_files', 'test_search_response', response)
         print("RESULT SAVED\n")
     
+    def test_null_query(self):
+        print("TESTING ENDPOINT: /query\n")
+        response = requests.get(url=f"{self.url}/query", json=self.test_null_query_request).json()
+        print("RESPONSE:\n")
+        print(response)
+        print("\n")
+        obj_to_json('test_files', 'test_query_response', response)
+        print("RESULT SAVED\n")
+        
     def test_query(self):
         print("TESTING ENDPOINT: /query\n")
         response = requests.get(url=f"{self.url}/query", json=self.test_query_request).json()
@@ -65,4 +75,5 @@ if __name__ == "__main__":
     # testAPI.test_batch_model()
     # testAPI.test_query()
     # testAPI.test_batch_query()
-    testAPI.test_search()
+    # testAPI.test_search()
+    testAPI.test_null_query()
