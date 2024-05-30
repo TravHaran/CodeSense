@@ -22,3 +22,7 @@ class BatchQueryRequest(BaseModel):
     question: str
     limit: int
     models: list[str] = []
+
+class BatchSearchRequest(BaseModel):
+    question: str
+    models: list[str] = []
