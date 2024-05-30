@@ -1,5 +1,5 @@
 {
-    "question": "Does this project have a multiplication capability?",
+    "question": "Is there any possibility of a zero division error in this project?",
     "limit": 5,
     "path": "https://github.com/TravHaran/rust-calculator"
 }
