@@ -41,7 +41,7 @@ class CodeBaseExtractGithub:
         path_content = self.get_content("")
         self.model = self._build_model("", path_content)
         #add repo name to top level of model
-        self.model["name"] = self.repo_name
+        self.model["name"] = f"{self.owner}/{self.repo_name}"
         return self.model
     
     def _build_model(self, path, content):

@@ -71,9 +71,9 @@ class TestAPI:
 
 if __name__ == "__main__":
     testAPI = TestAPI()
-    # testAPI.test_model()
+    testAPI.test_model()
     # testAPI.test_batch_model()
     # testAPI.test_query()
     # testAPI.test_batch_query()
     # testAPI.test_search()
-    testAPI.test_null_query()
+    # testAPI.test_null_query()

@@ -17,7 +17,7 @@ class AnnotationGeneration:
         self.res = ""
     
     def run(self, snippet):
-        annotation = self.snippet_summary(snippet)
+        annotation = self._snippet_summary(snippet)
         return self._markdown_to_plaintxt(annotation)
     
     def _snippet_summary(self, snippet):
@@ -68,7 +68,7 @@ class AnnotationGeneration:
         if element.text:
             stream.write(element.text)
         for sub in element:
-            self.unmark_element(sub, stream)
+            self._unmark_element(sub, stream)
         if element.tail:
             stream.write(element.tail)
         return stream.getvalue()
@@ -76,7 +76,7 @@ class AnnotationGeneration:
     
     def _markdown_to_plaintxt(self, marked_txt):
         # patch Markdown
-        Markdown.output_format["plain"] = self._unmark_element
+        Markdown.output_formats["plain"] = self._unmark_element
         __md = Markdown(output_format="plain")
         __md.stripTopLevelTags = False
         # convert txt
