@@ -248,21 +248,84 @@
   color: rgb(49, 49, 49);
 }
 
-.response {
+.gptResponseContainer {
+  display: grid;
+  grid-template-columns: 8fr 2fr;
+  grid-gap: 1vw 1vw;
+  height: 50vh;
+  margin-top: 30vh;
+}
+
+.topFilesTitle {
   text-align: center;
+}
+
+.fileAnnotation {
+}
+
+.topFilesListContainer {
+  padding-left: 30px;
+}
+
+.topFile {
+  cursor: pointer;
+  width: 90%;
+  transition: all 0.2s ease-in-out;
+  border-radius: 5px;
+  padding: 10px;
+}
+.topFile:hover {
+  background-color: #522703;
+}
+
+.ReactModal__Overlay {
+  opacity: 0;
+  transition: opacity 200ms ease-in-out;
+}
+
+.ReactModal__Overlay--after-open{
+  opacity: 1;
+}
+
+.ReactModal__Overlay--before-close{
+  opacity: 0;
+}
+
+.topFilesContainer {
   font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
   font-size: 18px;
-  max-height: 50vh;
+  max-height: 100vh;
   overflow: scroll;
   border-radius: 20px;
   padding: 20px;
-  margin-top: 30vh;
   line-height: 1.6;
-  background-color: rgb(49, 49, 49, 0.49);
+  background-color: rgb(49, 49, 49, 0.60);
   color: #fff !important;
-  width: 90vw;
   text-align: justify;
   border: 3px solid #000;
+}
+
+@keyframes typing {
+  from { height: 0 }
+  to { height: 100% }
+}
+
+.response {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  font-size: 18px;
+  max-height: 100vh;
+  overflow: scroll;
+  border-radius: 20px;
+  padding-left: 40px;
+  padding-top: 30px;
+  padding-right: 30px;
+  padding-bottom: 40px;
+  line-height: 1.6;
+  background-color: rgb(49, 49, 49, 0.60);
+  color: #fff !important;
+  width: 70vw;
+  border: 3px solid #000;
+    animation: typing 1s forwards;
   /* overflow: hidden; */
 }
 
@@ -299,6 +362,12 @@
 
 .response {
   color: #000;
+}
+
+.pathLink {
+  color: cornflowerblue;
+  text-decoration: underline;
+  cursor: pointer;
 }
 
 /* reset */
