@@ -44,7 +44,7 @@ class QueryAnswer:
         client = OpenAI(api_key=API_KEY)
 
         #GPT4o REPONSE REQUEST
-        MODEL="gpt-4o"
+        MODEL="gpt-3.5-turbo"
 
         completion = client.chat.completions.create(
         model=MODEL,
