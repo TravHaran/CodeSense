@@ -22,7 +22,11 @@ class BatchQueryRequest(BaseModel):
     question: str
     limit: int
     models: list[str] = []
+    def __getitem__(self, item):
+        return getattr(self, item)
 
 class BatchSearchRequest(BaseModel):
     question: str
     models: list[str] = []
+    def __getitem__(self, item):
+        return getattr(self, item)
