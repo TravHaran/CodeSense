@@ -61,18 +61,20 @@ class CodeBaseExtractGithub:
                 entry_content = self.get_content(entry_path)
                 if self.content_is_dir(entry_content):
                     model['children'].append(self._build_model(entry_path, entry_content))
-                # if the entry is a file, create a dictionary with name and type, keywords, annotation, and content
+                # if the entry is a file, create a dictionary with name and type, keywords, annotation, content, and url
                 else:
                     content = ""
+                    link = ""
                     # the file content is from the api response is encoded in base64
                     try:
                         content = base64.b64decode(entry_content["content"]).decode('utf-8')
                         # content = entry_content["content"]
+                        link = entry_content["html_url"]
                     except Exception: # handle decode errors
                         content = "n/a"
                     full_entry_path = os.path.join(self.repo_name, entry_path)
                     model['children'].append({'name': name, 'path': full_entry_path, 'type': 'file', 'keywords': [
-                    ], 'annotation': "", 'content': content})
+                    ], 'annotation': "", 'content': content, 'link': link})
         return model
                         
 
