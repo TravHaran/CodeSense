@@ -1,4 +1,4 @@
-# Project Codesense
+# Project Codesense: a codebase search engine
 
 ## Breakdown
 
