@@ -1,0 +1,4 @@
+{
+    "question": "is there a multiplication capability in these projects?",
+    "models": ["https://github.com/TravHaran/rust-calculator", "https://github.com/sachinl0har/Basic-Calc"]
+}
