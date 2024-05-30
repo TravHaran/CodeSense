@@ -2,11 +2,15 @@
 
 import Head from 'next/head'
 import Image from 'next/image'
+import { sendCodeBase, sendQuery } from './apiCalling';
 import styles from './page.module.css'
 import { Fragment, useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion';
 import Modal from 'react-modal';
 import bg from '../../public/background.jpeg'
+import axios from 'axios';
+import MarkdownView from 'react-showdown';
+
 // import Graph from 'react-json-graph';
 // import test_codebase from '../../public/test_github_codebase.json'
 // const fs = require("fs/promises");
@@ -25,8 +29,13 @@ export default function Home() {
   const [notificationModal, setNotificationModal] = useState(false);
   const [notificationType, setNotificationType] = useState('error');
   const [notificationMessage, setNotificationMessage] = useState("Error");
+  const [firstLink, setFirstLink] = useState("");
   const [codebaseJson, setCodebaseJson] = useState(null);
   const [response, setResponse] = useState("");
+
+  function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
 
   var numOfPastSummaries = 0
   const pastSummaries = {'hey':'hey'}
@@ -51,9 +60,12 @@ export default function Home() {
     if (query.length !== 0) {
       setQuerying(true)
     notification('positive', 'Querying Codebase...')
-
-
-    setResponse("To add a \"square\" function to the existing \"Calc\" struct in \"calc.rs\", you would define a new method called \"square\" in the \"impl\" block. This function will take a \"Vec<f64>\" and return a new \"Vec<f64>\" where each element is the square of the corresponding element in the input vector. Additionally, you will need to add a test case for this new function in the \"test_all_operations\" function.")
+    var queryResponseData = await sendQuery(query, 5, firstLink)
+   
+    var queryResponse = JSON.parse(queryResponseData).answer
+    
+    console.log(queryResponse)
+    setResponse(queryResponse)
 
     setTimeout(function(){
       setResponseRecieved(true)
@@ -65,59 +77,41 @@ export default function Home() {
     }
   }
 
-  const handleSubmit = async () => {
-
-    if (githubLink !== "") {
-      if (githubLink.includes("github.com/")) {
-        setRepoList(repoList => [...repoList, githubLink])
-        console.log(repoList)
-      } else {
-        notification('error', 'Error: Please enter a Github repository link')
-      }
+  useEffect(() => {
+    if (repoList.length > 0) {
+      setFirstLink(repoList[0].path)
+      console.log(repoList[0].path)
     }
-    const repositoryList = repoList
-    if (repositoryList.length == 0 && githubLink == "") {
-      handleRestart
-      // notification('error', "Error: Please enter a Github Repository link before continuing")
+  }, [repoList])
+
+  const handleSubmit = async () => {
+    if (githubLink !== "") {
+      await handleAddRepo()
+    }
+    // console.log(repositoryList)
+    if (repoList.length == 0 && githubLink == "") {
+      notification('error', "Error: Please enter a Github Repository link before continuing")
     } else {
       setIsModelling(true);
     set_codebase_modelled(false)
     notification('positive', 'Codebase Modelling in progress..')
-localStorage.setItem('githubLinks', JSON.stringify(repoList))
+    localStorage.setItem('githubLinks', JSON.stringify(repoList))
     localStorage.setItem('ignoreFiles', ignoreFiles)
-    const bookTitleAndAuthor = JSON.stringify({
-      githubLink
-    })
-    console.log(bookTitleAndAuthor)
+      const repositoryList = repoList
+    if (repositoryList.length <= 1) {
+      console.log(firstLink)
+      var codebase_modelled = await sendCodeBase(githubLink == "" ? firstLink : githubLink, [])
+    notification('positive', 'Codebase Sucessfully Modelled!')
+    localStorage.setItem('modelled_codebase', codebase_modelled)
+    } else if (repositoryList.length > 1) {
+      console.log('repoList')
+      var codebase_modelled = await sendCodeBase(repoList[0].path, [])
+    notification('positive', 'Codebase Sucessfully Modelled!')
+    localStorage.setItem('modelled_codebase', codebase_modelled)
+    }
     
-    const res = await fetch("/api/createMessage", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: bookTitleAndAuthor,
-    });
-    setTimeout(function(){
-      notification('positive', 'Codebase Modelling Completed!')
-  }, 2000);
-    
-
-    setTimeout(function(){
-      setIsModelling(false); 
-      set_codebase_modelled(true)
-  }, 5000);
-    
-    
-    
-    // console.log("RES: "+res.status)
-    // if (!res.ok) {
-    //   throw new Error(`HTTP error! status: ${res.status}`);
-    // }
-    // const data = await res.json();
-    // // console.log("MESSAGE: "+data.bookSummary)
-    // } catch (err) {
-    //   console.error('An error occurred while fetching the data.', err)
-    // }
+    setIsModelling(false)
+    set_codebase_modelled(true);
     }
     
     
@@ -128,7 +122,9 @@ localStorage.setItem('githubLinks', JSON.stringify(repoList))
     setGithubLink("")
     localStorage.removeItem('githubLinks')
     localStorage.removeItem('ignoreFiles')
+    localStorage.removeItem('modelled_codebase')
     setRepoList([])
+    setIsModelling(false)
     set_codebase_modelled(false)
     setIgnoreFiles([])
     setQuery("")
@@ -137,10 +133,10 @@ localStorage.setItem('githubLinks', JSON.stringify(repoList))
   }
 
   useEffect(() => {
-    if (localStorage.getItem("githubLinks") && JSON.parse(localStorage.getItem("githubLinks").length !== 2)) {
+    if (localStorage.getItem("modelled_codebase") && JSON.parse(localStorage.getItem("githubLinks").length !== 2)) {
       set_codebase_modelled(true)
       setRepoList(JSON.parse(localStorage.getItem("githubLinks")))
-      console.log(JSON.parse(localStorage.getItem("githubLinks").length))
+      setCodebaseJson(JSON.parse(localStorage.getItem("modelled_codebase")))
     } else {
       console.log('none')
       handleRestart()
@@ -166,7 +162,7 @@ localStorage.setItem('githubLinks', JSON.stringify(repoList))
   const handleAddRepo = async () => {
     if (githubLink !== "") {
       if (githubLink.includes("github.com/") && githubLink.split('/').length == 5) {
-        setRepoList(repoList => [...repoList, githubLink])
+        setRepoList(repoList => [...repoList, {"path": githubLink, ignore: ignoreFiles}])
       } else {
         notification('error', 'Error: Please enter a Github repository link')
       }
@@ -222,7 +218,7 @@ exit_to_app
         <div className={styles.repoContainer}>
           <div className={styles.addedRepoContainer}>
             {repoList.map(repo => 
-              <li>{repo}</li>
+              <li>{repo.path}</li>
             )}
           </div>
           
@@ -282,10 +278,10 @@ arrow_forward_ios
           className={styles.topRepoInput}
           style={{background:'none'}}
           >
-          <b>PROJECT:</b> {repo.split('/').pop().replaceAll("-", " ")}
+          <b>PROJECT:</b> {repo.path.split('/').pop().replaceAll("-", " ")}
           <br />
-          <b>OWNER:</b> {repo.split('/')[3]}<br />
-          <b>Link:</b> <a href={repo} target='_blank'>{repo}</a></p>
+          <b>OWNER:</b> {repo.path.split('/')[3]}<br />
+          <b>Link:</b> <a href={repo.path} target='_blank'>{repo.path}</a></p>
           
         )
         }
@@ -336,13 +332,8 @@ arrow_forward_ios
         </span></button>
           }</form>
           {responseRecieved &&
-          <div className={styles.responseContainer}>
-<div className={styles.response}>
-            <p  id="response">{response}</p>
+<MarkdownView className={styles.response} markdown={response} />
               
-          </div>
-
-          </div>
           
           
           }
