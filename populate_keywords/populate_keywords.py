@@ -30,8 +30,10 @@ class PopulateKeywords:
     def _populate(self, model):
         if model["type"] == "file":
             annotation = model["annotation"]
-            keywords = self.extractKeywords(annotation)
-            model['keywords'] = keywords
+            content = model["content"]
+            annotation_keywords = self.extractKeywords(annotation)
+            content_keywords = self.extractKeywords(content)
+            model['keywords'] = annotation_keywords + content_keywords
             return model  
         else:
             for child in model["children"]:
