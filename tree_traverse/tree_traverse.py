@@ -69,6 +69,13 @@ class TestTraverseCodebase:
         input_keywords = ["dskafjhaiuraefwkzdahsx"]
         updated_model = self.traverser.get_top_nodes(input_keywords, 5)
         assert updated_model['results'] == []
+    
+    def test_return_all_top_nodes(self):
+        print(f"Testing Traverse Codebase to return all relevant nodes, i.e. top_n=None")
+        input_keywords = ["Word2Vec"]
+        updated_model = self.traverser.get_top_nodes(input_keywords, None)
+        obj_to_json("./", "top_all", updated_model)
+        assert len(updated_model['results']) == 1
 
     def test_save_top_1_nodes(self):
         print(f"Testing Traverse Codebase to save top 1 nodes")
@@ -97,6 +104,7 @@ class TestTraverseCodebase:
 
 if __name__ == "__main__":
     testTraverseCodebase = TestTraverseCodebase()
+    testTraverseCodebase.test_return_all_top_nodes()
     testTraverseCodebase.test_return_empty_traversal()
     testTraverseCodebase.test_save_top_1_nodes()
     testTraverseCodebase.test_save_top_3_nodes()
