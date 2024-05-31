@@ -2,7 +2,7 @@
 
 import Head from 'next/head'
 import Image from 'next/image'
-import { sendCodeBase, sendQuery } from './apiCalling';
+import { sendCodeBase, sendQuery, search, sendBatchCodeBase, sendBatchQuery, batchSearch } from './apiCalling';
 import styles from './page.module.css'
 import { Fragment, useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion';
@@ -32,6 +32,12 @@ export default function Home() {
   const [firstLink, setFirstLink] = useState("");
   const [codebaseJson, setCodebaseJson] = useState(null);
   const [response, setResponse] = useState("");
+  const [completeResponse, setCompleteResponse] = useState(null);
+  const [topResAnnotation, setTopResAnnotation] = useState(null);
+  const [topResTitle, setTopResTitle] = useState(null);
+  const [topResPath, setTopResPath] = useState(null);
+  const [topRelevant, setTopRelevant] = useState(null);
+  const [opacity, setOpacity] = useState(0);
 
   function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
@@ -46,9 +52,16 @@ export default function Home() {
       left: '50%',
       right: 'auto',
       bottom: 'auto',
+      width: '70vw',
       marginRight: '-50%',
       transform: 'translate(-50%, -50%)',
+      backgroundColor: 'black',
+      borderRadius: '30px',
+      padding: '6vh 5vw',
     },
+    overlay: {
+      backgroundColor: "rgb(0.49, 0.49, 0.49, 0.59)"
+    }
   };
 
 
@@ -60,18 +73,38 @@ export default function Home() {
     if (query.length !== 0) {
       setQuerying(true)
     notification('positive', 'Querying Codebase...')
-    var queryResponseData = await sendQuery(query, 5, firstLink)
-   
-    var queryResponse = JSON.parse(queryResponseData).answer
+    console.log({repoList})
+    if (repoList.length == 1) {
+      var searchResponseData = await search(query, firstLink)
+      var queryResponseData = await sendQuery(query, 5, firstLink)
+    } else {
+      var repositoryLists = new Set(repoList);
+      setRepoList(Array.from(repositoryLists))
+      console.log(query)
+      console.log(repoList)
+      const models = []
+      repoList.forEach((item) => {
+        models.push("https://github.com/"+item.path)
+      }
+      )
+      console.log({"question": query, "limit": 5, "models": models})
+      var queryResponseData = await sendBatchQuery(query, 5, models)
+      var searchResponseData = await batchSearch(query, models)
+    }
+    var queryResponse = JSON.parse(queryResponseData)
+    var searchResponse = JSON.parse(searchResponseData)
+    // var queryResponse = queryResponseData
     
-    console.log(queryResponse)
-    setResponse(queryResponse)
-
-    setTimeout(function(){
+    console.log({searchResponse})
+    setCompleteResponse(queryResponse)
+    setResponse(queryResponse.answer)
+    setTopRelevant(searchResponse)
+      localStorage.setItem('completeResponse', JSON.stringify(queryResponse))
+      localStorage.setItem('response_text', queryResponse.answer)
+      localStorage.setItem('top_relevant', JSON.stringify(searchResponse))
       setResponseRecieved(true)
       setQuerying(false)
       notification('positive', 'Response Generated!')
-  }, 2000);
     } else {
       notification('error', 'Error: Please input a query before continuing')
     }
@@ -80,22 +113,23 @@ export default function Home() {
   useEffect(() => {
     if (repoList.length > 0) {
       setFirstLink(repoList[0].path)
-      console.log(repoList[0].path)
+      console.log(repoList[0])
     }
   }, [repoList])
 
   const handleSubmit = async () => {
-    if (githubLink !== "") {
-      await handleAddRepo()
-    }
     // console.log(repositoryList)
+    
     if (repoList.length == 0 && githubLink == "") {
       notification('error', "Error: Please enter a Github Repository link before continuing")
     } else {
+      var repositoryLists = new Set(repoList);
+      setRepoList(Array.from(repositoryLists))
+      await handleAddRepo()
       setIsModelling(true);
     set_codebase_modelled(false)
     notification('positive', 'Codebase Modelling in progress..')
-    localStorage.setItem('githubLinks', JSON.stringify(repoList))
+    localStorage.setItem('githubLinks', (JSON.stringify(repoList)))
     localStorage.setItem('ignoreFiles', ignoreFiles)
       const repositoryList = repoList
     if (repositoryList.length <= 1) {
@@ -104,8 +138,8 @@ export default function Home() {
     notification('positive', 'Codebase Sucessfully Modelled!')
     localStorage.setItem('modelled_codebase', codebase_modelled)
     } else if (repositoryList.length > 1) {
-      console.log('repoList')
-      var codebase_modelled = await sendCodeBase(repoList[0].path, [])
+      var codebase_modelled = await sendBatchCodeBase(repoList)
+      console.log(codebase_modelled)
     notification('positive', 'Codebase Sucessfully Modelled!')
     localStorage.setItem('modelled_codebase', codebase_modelled)
     }
@@ -123,6 +157,9 @@ export default function Home() {
     localStorage.removeItem('githubLinks')
     localStorage.removeItem('ignoreFiles')
     localStorage.removeItem('modelled_codebase')
+    localStorage.removeItem('completeResponse')
+    localStorage.removeItem('top_relevant')
+    localStorage.removeItem('response_text')
     setRepoList([])
     setIsModelling(false)
     set_codebase_modelled(false)
@@ -133,13 +170,35 @@ export default function Home() {
   }
 
   useEffect(() => {
-    if (localStorage.getItem("modelled_codebase") && JSON.parse(localStorage.getItem("githubLinks").length !== 2)) {
+    if (localStorage.getItem("modelled_codebase")) {
+      console.log(JSON.parse(localStorage.getItem("modelled_codebase")))
+      const codeBase = JSON.parse(localStorage.getItem("modelled_codebase"))
+      if ('results' in codeBase) {
+       var repoListBatch = []
+        codeBase.results.forEach((item) => {
+          repoListBatch.push({path: item.name, ignore: []})
+        })
+        localStorage.setItem("githubLinks", JSON.stringify(repoListBatch))
+      } else {
+        localStorage.setItem("githubLinks", JSON.stringify([{path: codeBase.name, ignore: []}]))
+      }
       set_codebase_modelled(true)
-      setRepoList(JSON.parse(localStorage.getItem("githubLinks")))
+      
+      const repositoryList = JSON.parse(localStorage.getItem("githubLinks"))
+      setRepoList(repositoryList)
+      console.log(repositoryList)
       setCodebaseJson(JSON.parse(localStorage.getItem("modelled_codebase")))
     } else {
       console.log('none')
-      handleRestart()
+      // handleRestart()
+    }
+    if (localStorage.getItem("completeResponse")) {
+      setCompleteResponse(JSON.parse(localStorage.getItem("complete_response")))
+    setResponse(localStorage.getItem("response_text"))
+    setQuery(JSON.parse(localStorage.getItem("completeResponse")).question)
+    setTopRelevant(JSON.parse(localStorage.getItem("top_relevant")))
+    setResponseRecieved(true)
+    setQuerying(false)
     }
   }, [])
 
@@ -156,7 +215,7 @@ export default function Home() {
     }
   }
   useEffect(() => {
-    allStorage()
+    allStorage() 
   }, [modalIsOpen])
 
   const handleAddRepo = async () => {
@@ -167,10 +226,11 @@ export default function Home() {
         notification('error', 'Error: Please enter a Github repository link')
       }
       
-    } else {
+    } else if (repoList.length==0) {
       notification('error', "Error: Please enter a Github Repository link before continuing")
     }
     setGithubLink("")
+    setIgnoreFiles([])
   }
 
   const handleAddIgnoreFile = () => {
@@ -198,9 +258,8 @@ export default function Home() {
       
 
   return (
-    <div className={styles.container} style={{
-      backgroundImage: `url(${bg.src})`,
-    }}>
+    <div className={styles.container} >
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
       <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
       <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
       <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
@@ -241,7 +300,12 @@ exit_to_app
             
             </form>
             {!isModelling &&
-            <motion.button whileHover={{scale: 1.1}} whileTap={{scale: 0.9}} onClick={(e) => {e.preventDefault(); handleSubmit()}} className={styles.submitRepo}><span class="material-symbols-outlined">
+            <motion.button whileHover={{scale: 1.1}} whileTap={{scale: 0.9}} onClick={async(e) => {
+            e.preventDefault(); 
+            if (repoList.length == 0) {
+              await handleAddRepo()
+            }
+            handleSubmit()}} className={styles.submitRepo}><span class="material-symbols-outlined">
 arrow_forward_ios
 </span></motion.button>
             }
@@ -278,31 +342,41 @@ arrow_forward_ios
           className={styles.topRepoInput}
           style={{background:'none'}}
           >
-          <b>PROJECT:</b> {repo.path.split('/').pop().replaceAll("-", " ")}
+          <b>PROJECT:</b> {("https://github.com/"+repo.path).split('/').pop().replaceAll("-", " ")}
           <br />
-          <b>OWNER:</b> {repo.path.split('/')[3]}<br />
-          <b>Link:</b> <a href={repo.path} target='_blank'>{repo.path}</a></p>
+          <b>OWNER:</b> {(("https://github.com/"+repo.path)).split('/')[3]}<br />
+          <b>Link:</b> <a className={styles.pathLink} href={"https://github.com/"+repo.path} target='_blank'>{"https://github.com/"+repo.path}</a></p>
           
         )
         }
       
     </div>
     )}
-
-    <Modal
+    {modalIsOpen && 
+    <motion.div
+    initial={{scale: 0.5}} 
+    transition={{duration: 0.9}} 
+    animate={{scale: 1}}>
+<Modal
     isOpen={modalIsOpen}
+    
     onRequestClose={closeModal}
     style={customStyles}
+    closeTimeoutMS={200}
     ariaHideApp={false}>
-          <h1>Past Summaries</h1>
+          <h1>{topResTitle}</h1>
+          <b>Path:</b> <p className={styles.pathLink}><a href={topResPath} target="_blank">{topResPath}</a></p>
           <div>
-            <p>hey</p>
-            
+            <hr /><br /><h4>File Summary:</h4><b></b> <MarkdownView className={styles.fileAnnotation} markdown={topResAnnotation}></MarkdownView>
           </div>
           
           
           
     </Modal>
+
+</motion.div>}
+
+    
     </motion.div>
     
     </div>
@@ -317,25 +391,60 @@ arrow_forward_ios
 
             </div>
             {!querying && !responseRecieved &&
-            <button className={styles.submitQueryButton} type='submit'><span class="material-symbols-outlined">
-arrow_forward_ios
-</span></button>
+            <motion.button initial={{scale: 0.5}} 
+            transition={{duration: 0.2}} 
+            whileHover={{scale: 1.1}}
+            whileTap={{scale: 0.9}}
+            animate={{scale: 1}} className={styles.submitQueryButton} type='submit'><span class="material-symbols-outlined">
+            search
+            </span></motion.button>
             }
             
             </div>
             
           {responseRecieved &&
-          <button className={styles.newQuestionButton} onClick={() => {setQuery(""); setQuerying(false); setResponseRecieved(false); setTimeout(function(){
+          <motion.button initial={{y: 100}} whileHover={{scale: 1.1}} whileTap={{scale:0.9}} transition={{duration: 0.1}} animate={{y: 0}} className={styles.newQuestionButton} onClick={() => {setQuery(""); setQuerying(false); setResponseRecieved(false); setTimeout(function(){
             document.getElementById("query").focus()
         }, 2000);}}><span class="material-symbols-outlined">
         restart_alt
-        </span></button>
+        </span></motion.button>
           }</form>
+          
           {responseRecieved &&
-<MarkdownView className={styles.response} markdown={response} />
+          <div className={styles.gptResponseContainer}>
+            <div className={styles.response}>
+              <div className={styles.progressiveText}>
+                <MarkdownView className={styles.responseText} markdown={response} />
+              </div>
               
-          
-          
+            </div>
+            
+            <div className={styles.topFilesContainer}>
+              <h3 className={styles.topFilesTitle}>Most Relevant Files</h3>
+              <hr />
+              <br />
+              <div className={styles.topFilesListContainer}>
+                <ol>
+{
+                topRelevant.results.map((item) =>
+                <motion.li initial={{y: 100}} whileHover={{scale: 1.1}} whileTap={{scale:0.9}} transition={{duration: 0.01}} animate={{y: 0}} onClick={() => {setIsOpen(true);
+                  setTopResAnnotation(item.highlights);
+                  setTopResTitle(item.node.name); 
+                  setTopResPath(item.node.link)
+                  setTimeout(() => {
+                    setOpacity(1);
+                  }, 100);
+                }}
+                className={styles.topFile}>{item.node.name}</motion.li>
+                )
+              }
+                  
+                </ol>
+                
+              </div>
+              
+            </div>
+          </div>
           }
           
       </div>
