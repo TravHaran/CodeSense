@@ -258,9 +258,7 @@ export default function Home() {
       
 
   return (
-    <div className={styles.container} style={{
-      backgroundImage: `url(${bg.src})`,
-    }}>
+    <div className={styles.container} >
       <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
       <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
       <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
@@ -344,10 +342,10 @@ arrow_forward_ios
           className={styles.topRepoInput}
           style={{background:'none'}}
           >
-          <b>PROJECT:</b> {repo.path.split('/').pop().replaceAll("-", " ")}
+          <b>PROJECT:</b> {("https://github.com/"+repo.path).split('/').pop().replaceAll("-", " ")}
           <br />
-          <b>OWNER:</b> {repo.path.split('/')[3]}<br />
-          <b>Link:</b> <a href={repo.path} target='_blank'>{repo.path}</a></p>
+          <b>OWNER:</b> {(("https://github.com/"+repo.path)).split('/')[3]}<br />
+          <b>Link:</b> <a className={styles.pathLink} href={"https://github.com/"+repo.path} target='_blank'>{"https://github.com/"+repo.path}</a></p>
           
         )
         }
@@ -405,11 +403,11 @@ arrow_forward_ios
             </div>
             
           {responseRecieved &&
-          <button className={styles.newQuestionButton} onClick={() => {setQuery(""); setQuerying(false); setResponseRecieved(false); setTimeout(function(){
+          <motion.button initial={{y: 100}} whileHover={{scale: 1.1}} whileTap={{scale:0.9}} transition={{duration: 0.1}} animate={{y: 0}} className={styles.newQuestionButton} onClick={() => {setQuery(""); setQuerying(false); setResponseRecieved(false); setTimeout(function(){
             document.getElementById("query").focus()
         }, 2000);}}><span class="material-symbols-outlined">
         restart_alt
-        </span></button>
+        </span></motion.button>
           }</form>
           
           {responseRecieved &&
