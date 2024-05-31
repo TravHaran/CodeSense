@@ -1,4 +1,4 @@
-# Project Codesense: a codebase search engine
+# Project Codesense: a search engine for codebases
 
 Checkout Demo Here: [https://www.youtube.com/watch?v=4XfCgc7lMVs](https://www.youtube.com/watch?v=_bPMY-AagAM&ab_channel=TravisRatnaharan)
 
