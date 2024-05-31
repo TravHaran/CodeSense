@@ -1,0 +1,71 @@
+{
+    "__init__": [
+        {
+            "function_name": "Queue",
+            "code_snippet": "Queue(maxsize=0)"
+        },
+        {
+            "function_name": "KeywordExtract",
+            "code_snippet": "KeywordExtract()"
+        },
+        {
+            "function_name": "json_to_obj",
+            "code_snippet": "json_to_obj(\n            \"batch_model_codebase.json\")"
+        }
+    ],
+    "query_codebase": [
+        {
+            "function_name": "TraverseCodebase",
+            "code_snippet": "TraverseCodebase(model)"
+        }
+    ],
+    "run": [
+        {
+            "function_name": "len",
+            "code_snippet": "len(self.threads)"
+        }
+    ],
+    "_run_single_pool": [],
+    "_run_multi_pool": [
+        {
+            "function_name": "range",
+            "code_snippet": "range(0, len(self.threads), self.max_threads)"
+        },
+        {
+            "function_name": "len",
+            "code_snippet": "len(self.threads)"
+        }
+    ],
+    "_build_result": [
+        {
+            "function_name": "convert_words_to_lowercase",
+            "code_snippet": "convert_words_to_lowercase(\n            self.query_keywords)"
+        },
+        {
+            "function_name": "get_matched_keywords",
+            "code_snippet": "get_matched_keywords(\n                node[\"keywords\"], lowered_input_keywords)"
+        },
+        {
+            "function_name": "QueryAnswer",
+            "code_snippet": "QueryAnswer(search_result)"
+        }
+    ],
+    "test_batch": [
+        {
+            "function_name": "print",
+            "code_snippet": "print(\"querying codebase...\")"
+        },
+        {
+            "function_name": "BatchQuery",
+            "code_snippet": "BatchQuery(self.test_batch_codebase_models, question, 5)"
+        },
+        {
+            "function_name": "print",
+            "code_snippet": "print(f\"RESPONSE: {ans}\")"
+        },
+        {
+            "function_name": "obj_to_json",
+            "code_snippet": "obj_to_json(\"../out\", \"batch_query_codebase\", response)"
+        }
+    ]
+}

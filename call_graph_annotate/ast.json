@@ -1,0 +1,57 @@
+{
+    "Module": {
+        "body": [
+            {
+                "Expr": {
+                    "value": {
+                        "Call": {
+                            "func": {
+                                "Name": {
+                                    "id": "print",
+                                    "ctx": "Load"
+                                }
+                            },
+                            "args": [
+                                {
+                                    "Constant": {
+                                        "value": "Hello World!"
+                                    }
+                                }
+                            ],
+                            "keywords": []
+                        }
+                    }
+                }
+            },
+            {
+                "Expr": {
+                    "value": {
+                        "Call": {
+                            "func": {
+                                "Attribute": {
+                                    "value": {
+                                        "Call": {
+                                            "func": {
+                                                "Name": {
+                                                    "id": "CodebaseExtractor",
+                                                    "ctx": "Load"
+                                                }
+                                            },
+                                            "args": [],
+                                            "keywords": []
+                                        }
+                                    },
+                                    "attr": "run",
+                                    "ctx": "Load"
+                                }
+                            },
+                            "args": [],
+                            "keywords": []
+                        }
+                    }
+                }
+            }
+        ],
+        "type_ignores": []
+    }
+}

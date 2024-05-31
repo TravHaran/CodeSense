@@ -81,7 +81,7 @@ export default function Home() {
       console.log(repoList)
       const models = []
       repoList.forEach((item) => {
-        models.push("https://github.com/"+item.path)
+        models.push(item.path)
       }
       )
       console.log({"question": query, "limit": 5, "models": models})
@@ -343,10 +343,10 @@ arrow_forward_ios
           className={styles.topRepoInput}
           style={{background:'none'}}
           >
-          <b>PROJECT:</b> {("https://github.com/"+repo.path).split('/').pop().replaceAll("-", " ")}
+          <b>PROJECT:</b> {(repo.path).split('/').pop()}
           <br />
-          <b>OWNER:</b> {(("https://github.com/"+repo.path)).split('/')[3]}<br />
-          <b>Link:</b> <a className={styles.pathLink} href={"https://github.com/"+repo.path} target='_blank'>{"https://github.com/"+repo.path}</a></p>
+          <b>OWNER:</b> {((repo.path)).split('/')[3]}<br />
+          <b>Link:</b> <a className={styles.pathLink} href={repo.path} target='_blank'>{repo.path}</a></p>
           
         )
         }
