@@ -1,15 +1,12 @@
 "use client";
 
-import Head from 'next/head'
-import Image from 'next/image'
+
 import { sendCodeBase, sendQuery, search, sendBatchCodeBase, sendBatchQuery, batchSearch } from './apiCalling';
 import styles from './page.module.css'
 import { Fragment, useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion';
 import Modal from 'react-modal';
-import bg from '../../public/background.jpeg'
-import axios from 'axios';
-import MarkdownView from 'react-showdown';
+import Markdown from 'react-markdown'
 
 // import Graph from 'react-json-graph';
 // import test_codebase from '../../public/test_github_codebase.json'
@@ -109,6 +106,8 @@ export default function Home() {
       notification('error', 'Error: Please input a query before continuing')
     }
   }
+
+  
 
   useEffect(() => {
     if (repoList.length > 0) {
@@ -255,6 +254,8 @@ export default function Home() {
   }, 100);
     
   }
+
+
       
 
   return (
@@ -367,7 +368,7 @@ arrow_forward_ios
           <h1>{topResTitle}</h1>
           <b>Path:</b> <p className={styles.pathLink}><a href={topResPath} target="_blank">{topResPath}</a></p>
           <div>
-            <hr /><br /><h4>File Summary:</h4><b></b> <MarkdownView className={styles.fileAnnotation} markdown={topResAnnotation}></MarkdownView>
+            <hr /><br /><h4>File Summary:</h4><b></b> <Markdown className={styles.fileAnnotation} >{topResAnnotation}</Markdown>
           </div>
           
           
@@ -414,7 +415,8 @@ arrow_forward_ios
           <div className={styles.gptResponseContainer}>
             <div className={styles.response}>
               <div className={styles.progressiveText}>
-                <MarkdownView className={styles.responseText} markdown={response} />
+              {/* <Typewriter words={[response]} deleteSpeed={0} typeSpeed={1} /> */}
+                <Markdown className={styles.responseText} >{response}</Markdown>
               </div>
               
             </div>

@@ -325,11 +325,11 @@
   padding-right: 30px;
   padding-bottom: 40px;
   line-height: 1.6;
-  background-color: rgb(49, 49, 49, 0.60);
+  background-color: rgba(36, 36, 36, 0.4);
   color: #fff !important;
   width: 70vw;
   border: 3px solid #000;
-    animation: typing 1s forwards;
+    animation: typing 0.8s forwards;
   /* overflow: hidden; */
 }
 
