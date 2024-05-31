@@ -1,6 +1,6 @@
 # Project Codesense: a codebase search engine
 
-Checkout Demo Here: https://www.youtube.com/watch?v=4XfCgc7lMVs
+Checkout Demo Here: h[ttps://www.youtube.com/watch?v=4XfCgc7lMVs](https://www.youtube.com/watch?v=_bPMY-AagAM&ab_channel=TravisRatnaharan)
 
 ## Breakdown
 
