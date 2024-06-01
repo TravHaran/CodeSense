@@ -1,6 +1,6 @@
 # CodeSense: AI Search Engine for Codebases
 
-We implemented a RAG pipeline which models a codebase and traverses it to feed into an LLM and generate responses to your questions
+We implemented a RAG pipeline which models a codebase and traverses it to feed into an LLM and generate responses to your questions, and also return the most relevant files according to semantic search.
 
 ### Ask a question about a codebase:
 
