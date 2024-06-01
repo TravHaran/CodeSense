@@ -2,8 +2,8 @@ import sys
 
 sys.path.insert(0, "..")
 
-from app import App
-from utilities.utility import obj_to_json
+from src.app import App
+from src.utilities.utility import obj_to_json
 import threading
 from queue import Queue
 

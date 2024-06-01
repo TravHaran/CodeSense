@@ -8,13 +8,13 @@ from pydantic import BaseModel
 
 import sys
 sys.path.insert(0, "..")
-from app import App 
+from src.app import App 
 import logging
-from codebase_extract.github_codebase_extract import CodeBaseExtractGithub
-from multithreading.batch_model import BatchModel
-from multithreading.batch_query import BatchQuery
-from multithreading.batch_search import BatchSearch
-from utilities.utility import json_to_obj, obj_to_json
+from src.codebase_extract.github_codebase_extract import CodeBaseExtractGithub
+from src.multithreading.batch_model import BatchModel
+from src.multithreading.batch_query import BatchQuery
+from src.multithreading.batch_search import BatchSearch
+from src.utilities.utility import json_to_obj, obj_to_json
 
 app = FastAPI()
 logging.basicConfig(level=logging.DEBUG)
@@ -65,7 +65,7 @@ async def search(request: SearchRequest):
     now = str(datetime.now())
     # save response
     save_file_name = f"query_response_{now}"
-    obj_to_json("database/queries", save_file_name, response)
+    obj_to_json("database/searches", save_file_name, response)
     return response
     
     
@@ -107,7 +107,7 @@ async def batchQuery(request: BatchQueryRequest):
     # save response
     now = str(datetime.now())
     save_file_name = f"batch_query_request_{now}"
-    obj_to_json("../out", save_file_name, response)
+    obj_to_json("database/batch_queries", save_file_name, response)
     return response
 
 @app.get('/batchSearch')
@@ -127,7 +127,7 @@ async def batchSearch(request: BatchSearchRequest):
     # save response
     now = str(datetime.now())
     save_file_name = f"batch_search_request_{now}"
-    obj_to_json("../out", save_file_name, response)
+    obj_to_json("database/batch_searches", save_file_name, response)
     return response
     
 

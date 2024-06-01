@@ -1,7 +1,7 @@
 import sys
 
 sys.path.insert(0, "..")
-from utilities.utility import obj_to_json, json_to_obj, compute_score, convert_words_to_lowercase, get_matched_keywords
+from src.utilities.utility import obj_to_json, json_to_obj, compute_score, convert_words_to_lowercase, get_matched_keywords
 
 '''
 Create a class to find the most relevant node in the codebase model given some keywords

@@ -1,8 +1,8 @@
 import sys
 
 sys.path.insert(0, "..")
-from keyword_extract.keyword_extract import KeywordExtract
-from utilities.utility import obj_to_json, json_to_obj
+from src.keyword_extract.keyword_extract import KeywordExtract
+from src.utilities.utility import obj_to_json, json_to_obj
 
 '''
 Create a class to populate the codebase json with keywords

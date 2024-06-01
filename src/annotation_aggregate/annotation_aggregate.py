@@ -1,7 +1,7 @@
 import sys
 
 sys.path.insert(0, "..")
-from utilities.utility import json_to_obj
+from src.utilities.utility import json_to_obj
 
 '''
 Create a class to aggregate the annotations of some target nodes
