@@ -2,7 +2,7 @@ import requests
 import sys 
 
 sys.path.insert(0, "..")
-from utilities.utility import obj_to_json, json_to_obj
+from src.utilities.utility import obj_to_json, json_to_obj
 
 class TestAPI:
     def __init__(self):
@@ -83,8 +83,8 @@ if __name__ == "__main__":
     testAPI = TestAPI()
     # testAPI.test_model()
     # testAPI.test_batch_model()
-    # testAPI.test_query()
-    testAPI.test_batch_query()
-    # testAPI.test_search()
-    # testAPI.test_null_query()
-    # testAPI.test_batch_search()
+    # # testAPI.test_query()
+    # testAPI.test_batch_query()
+    testAPI.test_search()
+    testAPI.test_null_query()
+    testAPI.test_batch_search()

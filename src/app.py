@@ -1,13 +1,16 @@
-from codebase_extract.codebase_extract import CodebaseExtract
-from codebase_extract.github_codebase_extract import CodeBaseExtractGithub
-from populate_annotations.populate_annotations import PopulateAnnotations
-from populate_annotations.batch_populate_annotations import BatchPopulateAnnotations
-from populate_keywords.populate_keywords import PopulateKeywords
-from keyword_extract.keyword_extract import KeywordExtract
-from tree_traverse.tree_traverse import TraverseCodebase
-from question_answering.question_answer import QueryAnswer
-from question_answering.search import Search
-from utilities.utility import obj_to_json, json_to_obj
+import sys
+
+sys.path.insert(0, "..")
+from src.codebase_extract.codebase_extract import CodebaseExtract
+from src.codebase_extract.github_codebase_extract import CodeBaseExtractGithub
+from src.populate_annotations.populate_annotations import PopulateAnnotations
+from src.populate_annotations.batch_populate_annotations import BatchPopulateAnnotations
+from src.populate_keywords.populate_keywords import PopulateKeywords
+from src.keyword_extract.keyword_extract import KeywordExtract
+from src.tree_traverse.tree_traverse import TraverseCodebase
+from src.question_answering.question_answer import QueryAnswer
+from src.question_answering.search import Search
+from src.utilities.utility import obj_to_json, json_to_obj
 
 class App:
     def model_code_base(self, code_base_path: str, ignore_paths) -> dict:

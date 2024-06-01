@@ -7,7 +7,7 @@ import requests
 
 sys.path.insert(0, "..")
 
-from utilities.utility import obj_to_json
+from src.utilities.utility import obj_to_json
 
 class CodeBaseExtractGithub:
     def __init__(self, github_repo):

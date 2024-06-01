@@ -2,8 +2,8 @@ import sys
 import re
 
 sys.path.insert(0, "..")
-from utilities.utility import json_to_obj, obj_to_json
-from keyword_extract.keyword_extract import KeywordExtract
+from src.utilities.utility import json_to_obj, obj_to_json
+from src.keyword_extract.keyword_extract import KeywordExtract
 
 '''
 Create a class that returns the search results for a query

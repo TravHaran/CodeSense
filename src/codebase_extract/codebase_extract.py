@@ -2,7 +2,7 @@ import os
 import sys
 sys.path.insert(0, "..")
 
-from utilities.utility import obj_to_json, file_to_string
+from src.utilities.utility import obj_to_json, file_to_string
 
 '''
 Create a class to extract a model of a codebase as a tree

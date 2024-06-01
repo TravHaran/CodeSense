@@ -4,8 +4,8 @@ from dotenv import load_dotenv
 import sys
 
 sys.path.insert(0, "..")
-from annotation_aggregate.annotation_aggregate import AnnotationAggregate
-from utilities.utility import json_to_obj
+from src.annotation_aggregate.annotation_aggregate import AnnotationAggregate
+from src.utilities.utility import json_to_obj
 
 '''
 Create a class that responds to a user query given context from the codebase

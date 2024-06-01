@@ -2,8 +2,8 @@ import os
 import sys
 
 sys.path.insert(0, "..")
-from annotation_generate.annotation_generate import AnnotationGeneration
-from utilities.utility import file_to_string, obj_to_json, json_to_obj
+from src.annotation_generate.annotation_generate import AnnotationGeneration
+from src.utilities.utility import file_to_string, obj_to_json, json_to_obj
 
 '''
 Create a class to populate the codebase json with annotations
