@@ -1,4 +1,13 @@
-# Project Codesense: a search engine for codebases
+# CodeSense: AI Search Engine for Codebases
+
+We implemented a RAG pipeline which models a codebase and traverses it to feed into an LLM and generate responses to your questions
+
+Ask a question about a codebase:
+![codesense_gif_demo1](https://github.com/TravHaran/CodeSense/assets/34573516/374aa452-eb9a-45db-8dd3-ece5ef72e253)
+
+Ask a question about multiple codebases:
+![codesesens_gif_demo2](https://github.com/TravHaran/CodeSense/assets/34573516/c13b9327-4143-4e75-beec-545751f2d1fd)
+
 
 Checkout Demo Here: [https://www.youtube.com/watch?v=4XfCgc7lMVs](https://www.youtube.com/watch?v=_bPMY-AagAM&ab_channel=TravisRatnaharan)
 
