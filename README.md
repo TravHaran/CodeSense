@@ -32,5 +32,3 @@ Checkout Full Demo Here: [https://www.youtube.com/watch?v=4XfCgc7lMVs](https://w
 ### 7. Question Answering
     - given the aggregated annoation report as context, provide an answer to the user's query.
 
-## Installation & Setup
-TODO
